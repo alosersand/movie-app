@@ -2,4 +2,5 @@
     <string name="app_name">MovieApp</string>
     <string name="movie_image">Movie image</string>
     <string name="movie_title">Movie Title</string>
+    <string name="database_error">Errore nell\'apertura del database</string>
 </resources>
