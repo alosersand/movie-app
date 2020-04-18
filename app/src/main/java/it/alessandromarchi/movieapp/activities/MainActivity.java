@@ -1,8 +1,10 @@
-package it.alessandromarchi.movieapp;
+package it.alessandromarchi.movieapp.activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import it.alessandromarchi.movieapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
