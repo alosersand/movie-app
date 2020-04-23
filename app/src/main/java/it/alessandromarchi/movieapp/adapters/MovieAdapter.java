@@ -20,7 +20,7 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View movieItem = layoutInflater.inflate(R.layout.movie_row, null);
+        View movieItem = layoutInflater.inflate(R.layout.movie_item, null);
 
         return movieItem;
     }
