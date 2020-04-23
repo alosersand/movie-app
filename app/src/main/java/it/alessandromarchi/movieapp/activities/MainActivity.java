@@ -1,12 +1,15 @@
 package it.alessandromarchi.movieapp.activities;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,13 +30,25 @@ public class MainActivity extends AppCompatActivity {
     MovieDB movieDB;
     Cursor movieItems;
 
-    ListView movieList;
     GridView movieGrid;
+
+    MenuItem seen;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar, menu);
+
+//        seen = menu.getItem(0);
+//        seen.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
+//                startActivity(movieDetail);
+//
+//                return true;
+//            }
+//        });
 
         return true;
     }
@@ -45,8 +60,15 @@ public class MainActivity extends AppCompatActivity {
 
         movieDB = new MovieDB(this);
 
-        movieList = findViewById(R.id.movie_list);
         movieGrid = findViewById(R.id.movie_grid);
+        movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
+                movieDetail.putExtra("movie_id", id);
+                startActivity(movieDetail);
+            }
+        });
     }
 
     @Override
@@ -68,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         if (movieItems != null) {
             if (movieAdapter == null) {
                 movieAdapter = new MovieAdapter(this, movieItems);
-                movieList.setAdapter(movieAdapter);
                 movieGrid.setAdapter(movieAdapter);
             } else {
                 movieAdapter.changeCursor(movieItems);
