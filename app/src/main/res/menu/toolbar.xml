@@ -6,4 +6,11 @@
         android:icon="@drawable/ic_eye"
         android:title="Seen"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        app:showAsAction="always" />
+
 </menu>
