@@ -30,7 +30,7 @@ public class MovieAdapter extends CursorAdapter {
         String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
         String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
         String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
-        boolean isSeen = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_SEEN)) == 1;
+        boolean isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 1;
         int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
     }
 }

@@ -23,7 +23,7 @@ public class MovieDB extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(MovieTableHelper.TITLE, "Title N°" + i);
-            values.put(MovieTableHelper.IS_SEEN, i % 3 == 1 ? 1 : 0);
+            values.put(MovieTableHelper.IS_WISHLIST, i % 3 == 1 ? 1 : 0);
 
             db.insert(MovieTableHelper.TABLE_NAME, null, values);
         }

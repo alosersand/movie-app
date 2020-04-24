@@ -4,13 +4,13 @@ public class Movie {
     private String title;
     private String description;
     private String imagePath;
-    private int isSeen;
+    private int isWishlist;
 
-    public Movie(String title, String description, String imagePath, int isSeen) {
+    public Movie(String title, String description, String imagePath, int isWishlist) {
         this.title = title;
         this.description = description;
         this.imagePath = imagePath;
-        this.isSeen = isSeen;
+        this.isWishlist = isWishlist;
     }
 
     public String getTitle() {
@@ -37,11 +37,11 @@ public class Movie {
         this.imagePath = imagePath;
     }
 
-    public int getIsSeen() {
-        return isSeen;
+    public int getIsWishlist() {
+        return isWishlist;
     }
 
-    public void setIsSeen(int isSeen) {
-        this.isSeen = isSeen;
+    public void setIsWishlist(int isWishlist) {
+        this.isWishlist = isWishlist;
     }
 }

@@ -6,11 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import it.alessandromarchi.movieapp.R;
 
-public class SeenMovies extends AppCompatActivity {
+public class Wishlist extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seen_movies);
+        setContentView(R.layout.activity_wishlist);
+        setTitle("Wishlist");
     }
 }

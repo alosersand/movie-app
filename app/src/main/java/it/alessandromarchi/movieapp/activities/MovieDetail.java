@@ -37,7 +37,7 @@ public class MovieDetail extends AppCompatActivity {
         Cursor movies = database.query(
                 MovieTableHelper.TABLE_NAME,
                 new String[]{
-                        MovieTableHelper.IS_SEEN,
+                        MovieTableHelper.IS_WISHLIST,
                         MovieTableHelper._ID
                 },
                 MovieTableHelper._ID + " = " + id,
@@ -49,7 +49,7 @@ public class MovieDetail extends AppCompatActivity {
 
         movies.moveToNext();
         if (movies.getCount() >= 1) {
-            title.setText("isSeen = " + movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_SEEN)));
+            title.setText("isWishlist = " + movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_WISHLIST)));
         } else {
             title.setText("ERRORE");
         }
