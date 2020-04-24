@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -32,23 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
     GridView movieGrid;
 
-    MenuItem seen;
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar, menu);
-
-//        seen = menu.getItem(0);
-//        seen.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
-//                startActivity(movieDetail);
-//
-//                return true;
-//            }
-//        });
 
         return true;
     }
@@ -69,6 +55,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(movieDetail);
             }
         });
+
+//        movieGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                Cursor movie = (Cursor) movieAdapter.getItem(position);
+//
+//                ContentValues values = new ContentValues();
+//
+//                values.put(MovieTableHelper.IS_SEEN, 1);
+//
+//
+//                return true;
+//            }
+//        });
     }
 
     @Override
