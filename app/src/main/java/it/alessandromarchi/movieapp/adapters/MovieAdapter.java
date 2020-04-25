@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.cursoradapter.widget.CursorAdapter;
 
 import it.alessandromarchi.movieapp.R;
+import it.alessandromarchi.movieapp.activities.MainActivity;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
 
 public class MovieAdapter extends CursorAdapter {
@@ -20,9 +21,16 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View movieItem = layoutInflater.inflate(R.layout.movie_item, null);
 
-        return movieItem;
+        View movie;
+
+        if (context instanceof MainActivity) {
+            movie = layoutInflater.inflate(R.layout.movie_item, null);
+        } else {
+            movie = layoutInflater.inflate(R.layout.movie_row, null);
+        }
+
+        return movie;
     }
 
     @Override
@@ -30,7 +38,9 @@ public class MovieAdapter extends CursorAdapter {
         String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
         String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
         String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
-        boolean isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 1;
+        int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
         int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
+
+
     }
 }
