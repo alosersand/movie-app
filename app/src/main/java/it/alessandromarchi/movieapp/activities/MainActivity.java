@@ -22,7 +22,6 @@ import it.alessandromarchi.movieapp.database.MovieTableHelper;
 public class MainActivity extends AppCompatActivity {
 
     final String tableName = MovieTableHelper.TABLE_NAME;
-    final String sortOrder = MovieTableHelper.TITLE + " ASC ";
 
     MovieAdapter movieAdapter;
 
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMovies() {
-        movieItems = database.query(tableName, null, null, null, null, null, sortOrder);
+        movieItems = database.query(tableName, null, null, null, null, null, null);
 
         if (movieItems != null) {
             if (movieAdapter == null) {
@@ -96,5 +95,8 @@ public class MainActivity extends AppCompatActivity {
                 movieAdapter.notifyDataSetChanged();
             }
         }
+
+        // movieItems.close();
+        database.close();
     }
 }

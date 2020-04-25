@@ -6,7 +6,7 @@
     tools:context=".activities.Wishlist">
 
     <ListView
-        android:id="@+id/seen_list"
+        android:id="@+id/wishlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
