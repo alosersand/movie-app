@@ -19,7 +19,7 @@ public class Wishlist extends AppCompatActivity {
 
     SQLiteDatabase database;
     MovieDB movieDB;
-    // Cursor movieItems;
+    Cursor movies;
 
     ListView moviesList;
 
@@ -48,13 +48,14 @@ public class Wishlist extends AppCompatActivity {
     }
 
     private void loadWishList() {
-        Cursor movieItems = database.query(
+        movies = database.query(
                 MovieTableHelper.TABLE_NAME,
-                new String[]{
+                /*new String[]{
                         MovieTableHelper._ID,
                         MovieTableHelper.TITLE,
                         MovieTableHelper.IS_WISHLIST
-                },
+                },*/
+                null,
                 MovieTableHelper.IS_WISHLIST + " = " + 1,
                 null,
                 null,
@@ -62,18 +63,19 @@ public class Wishlist extends AppCompatActivity {
                 null
         );
 
-        movieItems.moveToNext();
-        if (movieItems.getCount() >= 1) {
+        movies.moveToNext();
+        if (movies.getCount() >= 1) {
+
             if (movieAdapter == null) {
-                movieAdapter = new MovieAdapter(this, movieItems);
+                movieAdapter = new MovieAdapter(this, movies);
                 moviesList.setAdapter(movieAdapter);
             } else {
-                movieAdapter.changeCursor(movieItems);
+                movieAdapter.changeCursor(movies);
                 movieAdapter.notifyDataSetChanged();
             }
         }
 
-        // movieItems.close();
-        // database.close();
+        // movies.close();
+        database.close();
     }
 }

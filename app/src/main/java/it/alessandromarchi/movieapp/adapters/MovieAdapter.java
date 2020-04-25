@@ -35,12 +35,10 @@ public class MovieAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
         String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
         String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
         String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
         int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
-        int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
-
-
     }
 }
