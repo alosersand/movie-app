@@ -22,9 +22,9 @@ public class MovieDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
+        setContentView(R.layout.activity_detail);
 
-        title = findViewById(R.id.title);
+        title = findViewById(R.id.detail_title);
 
         movieDB = new MovieDB(this);
         database = movieDB.getReadableDatabase();

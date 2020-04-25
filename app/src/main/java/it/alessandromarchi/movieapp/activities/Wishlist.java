@@ -21,7 +21,7 @@ public class Wishlist extends AppCompatActivity {
     MovieDB movieDB;
     // Cursor movieItems;
 
-    ListView movieList;
+    ListView moviesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class Wishlist extends AppCompatActivity {
 
         movieDB = new MovieDB(this);
 
-        movieList = findViewById(R.id.wishlist);
+        moviesList = findViewById(R.id.movies_list);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Wishlist extends AppCompatActivity {
         if (movieItems.getCount() >= 1) {
             if (movieAdapter == null) {
                 movieAdapter = new MovieAdapter(this, movieItems);
-                movieList.setAdapter(movieAdapter);
+                moviesList.setAdapter(movieAdapter);
             } else {
                 movieAdapter.changeCursor(movieItems);
                 movieAdapter.notifyDataSetChanged();

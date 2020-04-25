@@ -6,8 +6,8 @@
     android:paddingVertical="16dp">
 
     <ImageView
+        android:id="@+id/grid_item"
         android:layout_width="100dp"
-        android:id="@+id/movie_item"
         android:layout_height="120dp"
         android:background="@color/colorAccent"
         android:elevation="2dp"

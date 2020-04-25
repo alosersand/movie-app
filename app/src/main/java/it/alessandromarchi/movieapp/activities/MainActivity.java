@@ -27,19 +27,19 @@ public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase database;
     MovieDB movieDB;
-    Cursor movieItems;
+    Cursor movies;
 
-    GridView movieGrid;
+    GridView moviesGrid;
 
-    MenuItem wishlist;
+    MenuItem action_wishlist;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar, menu);
+        inflater.inflate(R.menu.action_menu, menu);
 
-        wishlist = menu.getItem(0);
-        wishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        action_wishlist = menu.getItem(0);
+        action_wishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Intent wishlist = new Intent(MainActivity.this, Wishlist.class);
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         movieDB = new MovieDB(this);
 
-        movieGrid = findViewById(R.id.movie_grid);
-        movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        moviesGrid = findViewById(R.id.movies_grid);
+        moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
@@ -84,14 +84,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMovies() {
-        movieItems = database.query(tableName, null, null, null, null, null, null);
+        movies = database.query(tableName, null, null, null, null, null, null);
 
-        if (movieItems != null) {
+        if (movies != null) {
             if (movieAdapter == null) {
-                movieAdapter = new MovieAdapter(this, movieItems);
-                movieGrid.setAdapter(movieAdapter);
+                movieAdapter = new MovieAdapter(this, movies);
+                moviesGrid.setAdapter(movieAdapter);
             } else {
-                movieAdapter.changeCursor(movieItems);
+                movieAdapter.changeCursor(movies);
                 movieAdapter.notifyDataSetChanged();
             }
         }

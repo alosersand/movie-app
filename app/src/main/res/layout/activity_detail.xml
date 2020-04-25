@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/detail_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
@@ -24,7 +24,7 @@
         app:layout_constraintGuide_percent="0.33" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/detail_title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"

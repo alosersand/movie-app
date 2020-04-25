@@ -7,7 +7,7 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/row_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="fitCenter"
@@ -16,17 +16,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/row_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/title"
-        app:layout_constraintBottom_toBottomOf="@+id/image"
-        app:layout_constraintStart_toEndOf="@+id/image"
-        app:layout_constraintTop_toTopOf="@+id/image" />
+        app:layout_constraintBottom_toBottomOf="@+id/row_image"
+        app:layout_constraintStart_toEndOf="@+id/row_image"
+        app:layout_constraintTop_toTopOf="@+id/row_image" />
 
     <ImageView
-        android:id="@+id/wishlist"
+        android:id="@+id/row_wishlist"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:scaleType="fitCenter"
