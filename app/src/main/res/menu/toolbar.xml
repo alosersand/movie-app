@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/seen"
-        android:icon="@drawable/ic_eye"
-        android:title="Seen"
-        app:showAsAction="always" />
+        android:id="@+id/wishlist"
+        android:icon="@drawable/ic_wishlist"
+        android:title="@string/wishlist"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/search"
         android:icon="@drawable/ic_search"
-        android:title="Search"
-        app:showAsAction="always" />
+        android:title="@string/search"
+        app:showAsAction="ifRoom" />
 
 </menu>
