@@ -25,7 +25,8 @@
 
         <provider
             android:name=".database.MovieProvider"
-            android:authorities="it.alessandromarchi.movieapp.database.ContentProvider" />
+            android:authorities="it.alessandromarchi.movieapp.database.ContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

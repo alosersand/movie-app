@@ -26,6 +26,7 @@ public class MovieProvider extends ContentProvider {
 
     public static final Uri MOVIES_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY
             + "/" + BASE_PATH_MOVIES);
+
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -53,6 +54,7 @@ public class MovieProvider extends ContentProvider {
                 builder.setTables(MovieTableHelper.TABLE_NAME);
                 builder.appendWhere(MovieTableHelper._ID + " = " + uri.getLastPathSegment());
                 break;
+
             case ALL_MOVIES:
                 builder.setTables(MovieTableHelper.TABLE_NAME);
                 break;
@@ -70,6 +72,7 @@ public class MovieProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case SINGLE_MOVIE:
                 return MIME_TYPE_MOVIE;
+
             case ALL_MOVIES:
                 return MIME_TYPE_MOVIES;
         }
@@ -84,8 +87,10 @@ public class MovieProvider extends ContentProvider {
             SQLiteDatabase db = database.getWritableDatabase();
             long result = db.insert(MovieTableHelper.TABLE_NAME, null, values);
             String resultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_MOVIES + "/" + result;
+
             getContext().getContentResolver().notifyChange(uri, null);
-            return Uri.parse(resultString);
+
+            return Uri.parse(uri.toString() + "/" + resultString);
         }
 
         return null;
