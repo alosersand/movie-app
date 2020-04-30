@@ -40,5 +40,13 @@ public class MovieAdapter extends CursorAdapter {
         String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
         String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
         int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
+
+        if (context instanceof MainActivity) {
+            if (isWishlist == 1) {
+                view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
+            } else {
+                view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
+            }
+        }
     }
 }
