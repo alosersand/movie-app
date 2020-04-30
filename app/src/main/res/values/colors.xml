@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">@color/_dark</color>
     <color name="colorAccent">@color/_accent</color>
 
-    <color name="_primary">#003459</color>
-    <color name="_dark">#00171F</color>
-    <color name="_accent">#FFD400</color>
+    <color name="_primary">#087DFF</color>
+    <color name="_dark">#0E5BB3</color>
+    <color name="_accent">#FF3321</color>
 </resources>
