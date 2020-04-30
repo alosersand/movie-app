@@ -7,6 +7,7 @@
     android:padding="16dp">
 
     <ImageView
+        android:tint="@color/colorPrimary"
         android:id="@+id/row_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
