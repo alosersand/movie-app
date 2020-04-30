@@ -10,10 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -23,8 +25,10 @@ import it.alessandromarchi.movieapp.adapters.MovieAdapter;
 import it.alessandromarchi.movieapp.database.MovieDB;
 import it.alessandromarchi.movieapp.database.MovieProvider;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
+import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragment;
+import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
     final String tableName = MovieTableHelper.TABLE_NAME;
     private static final int LOADER_ID = 568175;
@@ -72,6 +76,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
                 movieDetail.putExtra("movie_id", id);
                 startActivity(movieDetail);
+            }
+        });
+        moviesGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ConfirmDialogFragment dialogFragment;
+
+                database = movieDB.getReadableDatabase();
+                Cursor titles = database.query(
+                        MovieTableHelper.TABLE_NAME,
+                        new String[]{
+                                MovieTableHelper.TITLE,
+                                MovieTableHelper._ID
+                        },
+                        MovieTableHelper._ID + " = " + id,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                titles.moveToNext();
+                if (titles.getCount() >= 1) {
+                    dialogFragment = new ConfirmDialogFragment("Aggiungere " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)) + " alla Wishlist?", id);
+                } else {
+                    dialogFragment = new ConfirmDialogFragment("Aggiungere il film alla Wishlist?", id);
+                }
+
+                dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+
+                return true;
             }
         });
 
@@ -123,5 +159,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         movieAdapter.changeCursor(null);
+    }
+
+    @Override
+    public void onPositivePressed(long movieID) {
+        Toast.makeText(this, "Aggiunto alla Wishlist", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNegativePressed() {
+
     }
 }
