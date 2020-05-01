@@ -30,14 +30,13 @@ public class MovieDetail extends AppCompatActivity {
         database = movieDB.getReadableDatabase();
 
         Intent intent = getIntent();
-        Long id = intent.getLongExtra("movie_id", 0);
-
-        setTitle(id.toString());
+        long id = intent.getLongExtra("movie_id", 0);
 
         Cursor movies = database.query(
                 MovieTableHelper.TABLE_NAME,
                 new String[]{
                         MovieTableHelper.IS_WISHLIST,
+                        MovieTableHelper.TITLE,
                         MovieTableHelper._ID
                 },
                 MovieTableHelper._ID + " = " + id,
@@ -49,9 +48,11 @@ public class MovieDetail extends AppCompatActivity {
 
         movies.moveToNext();
         if (movies.getCount() >= 1) {
-            title.setText("isWishlist = " + movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_WISHLIST)));
+            title.setText(getString(R.string.TMP, movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_WISHLIST))));
+            setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
         } else {
-            title.setText("ERRORE");
+            title.setText(R.string.database_read_error);
+            setTitle(R.string.app_name);
         }
 
         movies.close();

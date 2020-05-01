@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">MovieApp</string>
-    <string name="database_error">Database Error</string>
-    <string name="title">Title</string>
-    <string name="wishlist">Wishlist</string>
-    <string name="search">Search</string>
+    <string name="title">Titolo</string>
+    <string name="wishlist" translatable="false">Wishlist</string>
+    <string name="search">Cerca</string>
+    <string name="database_read_error">Errore nella lettura del database</string>
+    <string name="database_write_error">Errore nella scrittura sul database</string>
+    <string name="TMP" translatable="false">isWishlist = %d</string>
+    <string name="dialog_error_confirm">Aggiungere il Film alla Wishlist?</string>
+    <string name="dialog_confirm">Aggiungere %s alla Wishlist?</string>
+    <string name="wishlist_add">Aggiunto alla Wishlist</string>
+    <string name="add">aggiungi</string>
+    <string name="cancel">annulla</string>
 </resources>

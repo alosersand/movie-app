@@ -1,7 +1,6 @@
 package it.alessandromarchi.movieapp.activities;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -22,9 +21,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 
     private static final int LOADER_ID = 871462;
 
-    SQLiteDatabase database;
     MovieDB movieDB;
-    Cursor movies;
     MovieAdapter movieAdapter;
 
     ListView moviesList;
@@ -33,7 +30,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
-        setTitle("Wishlist");
+        setTitle(R.string.wishlist);
 
         movieDB = new MovieDB(this);
         movieAdapter = new MovieAdapter(this, null);
@@ -41,6 +38,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
         moviesList = findViewById(R.id.movies_list);
         moviesList.setAdapter(movieAdapter);
 
+        //TODO aggiornare con metodo non deprecato
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -49,14 +47,6 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
         super.onResume();
 
         movieAdapter.notifyDataSetChanged();
-
-//        database = movieDB.getReadableDatabase();
-//
-//        if (database != null) {
-//            loadWishList();
-//        } else {
-//            Toast.makeText(this, R.string.database_error, Toast.LENGTH_LONG).show();
-//        }
     }
 
     @NonNull
@@ -81,36 +71,4 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         movieAdapter.changeCursor(null);
     }
-
-//    private void loadWishList() {
-//        movies = database.query(
-//                MovieTableHelper.TABLE_NAME,
-//                /*new String[]{
-//                        MovieTableHelper._ID,
-//                        MovieTableHelper.TITLE,
-//                        MovieTableHelper.IS_WISHLIST
-//                },*/
-//                null,
-//                MovieTableHelper.IS_WISHLIST + " = " + 1,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-//
-//        movies.moveToNext();
-//        if (movies.getCount() >= 1) {
-//
-//            if (movieAdapter == null) {
-//                movieAdapter = new MovieAdapter(this, movies);
-//                moviesList.setAdapter(movieAdapter);
-//            } else {
-//                movieAdapter.changeCursor(movies);
-//                movieAdapter.notifyDataSetChanged();
-//            }
-//        }
-//
-//        // movies.close();
-//        database.close();
-//    }
 }

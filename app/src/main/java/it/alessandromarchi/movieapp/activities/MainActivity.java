@@ -30,12 +30,10 @@ import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
-    final String tableName = MovieTableHelper.TABLE_NAME;
     private static final int LOADER_ID = 568175;
 
     SQLiteDatabase database;
     MovieDB movieDB;
-    Cursor movies;
     MovieAdapter movieAdapter;
 
     GridView moviesGrid;
@@ -100,10 +98,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 titles.moveToNext();
                 if (titles.getCount() >= 1) {
-                    dialogFragment = new ConfirmDialogFragment("Aggiungere " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)) + " alla Wishlist?", id);
+                    dialogFragment = new ConfirmDialogFragment(getString(R.string.dialog_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
                 } else {
-                    dialogFragment = new ConfirmDialogFragment("Aggiungere il film alla Wishlist?", id);
+                    dialogFragment = new ConfirmDialogFragment(getString(R.string.dialog_error_confirm), id);
                 }
+                titles.close();
 
                 dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
 
@@ -111,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+        //TODO aggiornare con metodo non deprecato
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -119,31 +119,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onResume();
 
         movieAdapter.notifyDataSetChanged();
-
-//        database = movieDB.getReadableDatabase();
-//
-//        if (database != null) {
-//            loadMovies();
-//        } else {
-//            Toast.makeText(this, R.string.database_error, Toast.LENGTH_LONG).show();
-//        }
     }
-
-//    private void loadMovies() {
-//        movies = database.query(tableName, null, null, null, null, null, null);
-//
-//        if (movies != null) {
-//            if (movieAdapter == null) {
-//                movieAdapter = new MovieAdapter(this, movies);
-//                moviesGrid.setAdapter(movieAdapter);
-//            } else {
-//                movieAdapter.changeCursor(movies);
-//                movieAdapter.notifyDataSetChanged();
-//            }
-//        }
-//
-//        database.close();
-//    }
 
     @NonNull
     @Override
@@ -163,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onPositivePressed(long movieID) {
-        Toast.makeText(this, "Aggiunto alla Wishlist", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.wishlist_add, Toast.LENGTH_SHORT).show();
     }
 
     @Override

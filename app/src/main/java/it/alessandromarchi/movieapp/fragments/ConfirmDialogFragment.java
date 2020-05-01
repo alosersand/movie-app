@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import it.alessandromarchi.movieapp.R;
+
 public class ConfirmDialogFragment extends DialogFragment {
 
     private String title;
@@ -47,13 +49,13 @@ public class ConfirmDialogFragment extends DialogFragment {
 
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
-        alertDialog.setPositiveButton("Aggiungi", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onPositivePressed(movieID);
             }
         });
-        alertDialog.setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onNegativePressed();

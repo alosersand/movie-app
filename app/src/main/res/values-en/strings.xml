@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="title">Title</string>
+    <string name="search">Search</string>
+    <string name="dialog_confirm">Add %s to Wishlist?</string>
+    <string name="dialog_error_confirm">Add Film to Wishlist?</string>
+    <string name="database_write_error">Error in writing database</string>
+    <string name="database_read_error">Error on reading database</string>
+    <string name="wishlist_add">Added to Wishlist</string>
+    <string name="add">add</string>
+    <string name="cancel">cancel</string>
+</resources>

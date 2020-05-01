@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class MovieDB extends SQLiteOpenHelper {
-    public static final String DB_NAME = "movies.db";
-    public static final int VERSION = 1;
+    private static final String DB_NAME = "movies.db";
+    private static final int VERSION = 1;
 
     public MovieDB(@Nullable Context context) {
         super(context, DB_NAME, null, VERSION);
