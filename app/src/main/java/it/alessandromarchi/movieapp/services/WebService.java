@@ -1,10 +1,8 @@
 package it.alessandromarchi.movieapp.services;
 
 import java.io.IOException;
-import java.util.List;
 
-import it.alessandromarchi.movieapp.models.Movie;
-import it.alessandromarchi.movieapp.models.Result;
+import it.alessandromarchi.movieapp.models.TMDBResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -14,12 +12,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WebService {
 
 	private static WebService instance;
-	private List<Movie> movies;
-	private String MOVIES_BASE_URL = "https://api.themoviedb.org/3/";
+
+	private String MOVIES_BASE_URL = "https://api.themoviedb.org/";
 	private String API_KEY = "5771171ef3fdb433ef45cd105f4b541f";
 	private String LANGUAGE = "it-IT";
 	private String PAGE = "1";
 	private String REGION = "IT";
+	private String VERSION = "3";
+	private String CATEGORY = "popular";
 	private iMovieService iMovieService;
 
 	private WebService() {
@@ -38,12 +38,11 @@ public class WebService {
 	}
 
 	public void getMovies(final iWebServer listener) {
-		Call<Result> result = iMovieService.getResult(API_KEY, LANGUAGE, PAGE, REGION);
-		List<Movie> movies;
+		Call<TMDBResponse> response = iMovieService.getResponse(VERSION, CATEGORY, API_KEY, LANGUAGE, PAGE, REGION);
 
-		result.enqueue(new Callback<Result>() {
+		response.enqueue(new Callback<TMDBResponse>() {
 			@Override
-			public void onResponse(Call<Result> call, Response<Result> response) {
+			public void onResponse(Call<TMDBResponse> call, Response<TMDBResponse> response) {
 				if (response.code() == 200) {
 					listener.onMoviesFetched(true, response.body(), -1, null);
 				} else {
@@ -56,9 +55,11 @@ public class WebService {
 			}
 
 			@Override
-			public void onFailure(Call<Result> call, Throwable t) {
+			public void onFailure(Call<TMDBResponse> call, Throwable t) {
 				listener.onMoviesFetched(false, null, -1, t.getLocalizedMessage());
 			}
 		});
 	}
+
+
 }
