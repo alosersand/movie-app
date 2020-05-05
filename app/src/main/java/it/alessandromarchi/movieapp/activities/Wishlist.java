@@ -1,12 +1,19 @@
 package it.alessandromarchi.movieapp.activities;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -16,11 +23,14 @@ import it.alessandromarchi.movieapp.adapters.MovieAdapter;
 import it.alessandromarchi.movieapp.database.MovieDB;
 import it.alessandromarchi.movieapp.database.MovieProvider;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
+import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragment;
+import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
 
-public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
     private static final int LOADER_ID = 871462;
 
+	SQLiteDatabase database;
     MovieDB movieDB;
     MovieAdapter movieAdapter;
 
@@ -37,6 +47,39 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 
         moviesList = findViewById(R.id.movies_list);
         moviesList.setAdapter(movieAdapter);
+			moviesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					FragmentManager fragmentManager = getSupportFragmentManager();
+					ConfirmDialogFragment dialogFragment;
+
+					database = movieDB.getReadableDatabase();
+					Cursor titles = database.query(
+									MovieTableHelper.TABLE_NAME,
+									new String[]{
+													MovieTableHelper.TITLE,
+													MovieTableHelper._ID
+									},
+									MovieTableHelper._ID + " = " + id,
+									null,
+									null,
+									null,
+									null
+					);
+
+					titles.moveToNext();
+					if (titles.getCount() >= 1) {
+						dialogFragment = new ConfirmDialogFragment(getString(R.string.remove_title), getString(R.string.dialog_remove_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
+					} else {
+						dialogFragment = new ConfirmDialogFragment(getString(R.string.remove_title), getString(R.string.dialog_remove_error_confirm), id);
+					}
+					titles.close();
+
+					dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+
+					return true;
+				}
+			});
 
         //TODO aggiornare con metodo non deprecato
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
@@ -71,4 +114,19 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         movieAdapter.changeCursor(null);
     }
+
+	@Override
+	public void onPositivePressed(long movieID) {
+		ContentValues values = new ContentValues();
+		values.put(MovieTableHelper.IS_WISHLIST, 0);
+
+		getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
+
+		Toast.makeText(this, R.string.wishlist_remove, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onNegativePressed() {
+
+	}
 }
