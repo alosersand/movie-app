@@ -4,14 +4,17 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Result {
+public class TMDBResponse {
 
 	@SerializedName("page")
 	private Integer page;
+
 	@SerializedName("total_results")
 	private Integer totalResults;
+
 	@SerializedName("total_pages")
 	private Integer totalPages;
+
 	@SerializedName("results")
 	private List<Movie> movies;
 

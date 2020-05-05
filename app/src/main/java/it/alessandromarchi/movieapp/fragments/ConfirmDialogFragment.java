@@ -47,9 +47,18 @@ public class ConfirmDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
+			String positiveButton;
+
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
-        alertDialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+
+			if (title.equals(getString(R.string.add_title))) {
+				positiveButton = getString(R.string.add);
+			} else {
+				positiveButton = getString(R.string.remove);
+			}
+
+			alertDialog.setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onPositivePressed(movieID);

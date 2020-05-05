@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
@@ -46,17 +47,22 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 //        int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
-//        String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
-//        String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
+			String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
+			String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
 //        String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
         int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
 
-        if (context instanceof MainActivity) {
-            if (isWishlist == 1) {
-                view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
-            } else {
-                view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
-            }
-        }
-    }
+			if (context instanceof MainActivity) {
+				if (isWishlist == 1) {
+					view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
+				} else {
+					view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
+				}
+			} else { // WISHLIST
+				TextView rowTitle = view.findViewById(R.id.row_title);
+				rowTitle.setText(title);
+			}
+
+
+		}
 }
