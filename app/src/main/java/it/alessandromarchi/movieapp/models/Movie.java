@@ -1,8 +1,13 @@
 package it.alessandromarchi.movieapp.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie {
+    @SerializedName("title")
     private String title;
+    @SerializedName("overview")
     private String description;
+    @SerializedName("poster_path")
     private String imagePath;
     private int isWishlist;
 
