@@ -1,8 +1,10 @@
 package it.alessandromarchi.movieapp.activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,12 +34,15 @@ import it.alessandromarchi.movieapp.database.MovieTableHelper;
 import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragment;
 import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
 import it.alessandromarchi.movieapp.models.Movie;
+import it.alessandromarchi.movieapp.models.TMDBResponse;
 import it.alessandromarchi.movieapp.services.WebService;
 import it.alessandromarchi.movieapp.services.iWebServer;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
 	private static final int LOADER_ID = 568175;
+
+	List<Movie> movies;
 
 	SQLiteDatabase database;
 	MovieDB movieDB;
@@ -50,19 +55,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	WebService webService;
 	iWebServer webServerListener = new iWebServer() {
 		@Override
-		public void onMoviesFetched(boolean success, List<Movie> movies, int errorCode, String errorMessage) {
+		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
 			if (success) {
-				movieAdapter.setMovie(movies);
+				movies = _TMDBResponse.getMovies();
+
+				Log.d("boi", "onMoviesFetched: " + movies);
+
+				ContentValues values = new ContentValues();
+				for (Movie movie : movies) {
+					values.put(MovieTableHelper.TITLE, movie.getTitle());
+					values.put(MovieTableHelper.DESCRIPTION, movie.getDescription());
+				}
+				getContentResolver().insert(MovieProvider.MOVIES_URI, values);
+
 				movieAdapter.notifyDataSetChanged();
+
 				progressBar.setVisibility(View.GONE);
 				moviesGrid.setVisibility(View.VISIBLE);
-
-				Log.d("♦", "onMoviesFetched: " + movies);
 			} else {
 				progressBar.setVisibility(View.VISIBLE);
 				moviesGrid.setVisibility(View.GONE);
-
-				Log.d("♦", "onMoviesFetched: " + errorMessage);
 			}
 		}
 	};
@@ -99,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		progressBar = findViewById(R.id.progressBar);
 
 		moviesGrid = findViewById(R.id.movies_grid);
+
+		webService.getMovies(webServerListener);
+
 		moviesGrid.setAdapter(movieAdapter);
 		moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -130,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 				titles.moveToNext();
 				if (titles.getCount() >= 1) {
-					dialogFragment = new ConfirmDialogFragment(getString(R.string.dialog_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
+					dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
 				} else {
-					dialogFragment = new ConfirmDialogFragment(getString(R.string.dialog_error_confirm), id);
+					dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
 				}
 				titles.close();
 
@@ -150,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	protected void onResume() {
 		super.onResume();
 
-		webService.getMovies(webServerListener);
 		movieAdapter.notifyDataSetChanged();
 	}
 
@@ -172,6 +186,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	@Override
 	public void onPositivePressed(long movieID) {
+		ContentValues values = new ContentValues();
+		values.put(MovieTableHelper.IS_WISHLIST, 1);
+
+		int uri = getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
+
 		Toast.makeText(this, R.string.wishlist_add, Toast.LENGTH_SHORT).show();
 	}
 
