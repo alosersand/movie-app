@@ -1,6 +1,5 @@
 package it.alessandromarchi.movieapp.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -19,14 +18,14 @@ public class MovieDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MovieTableHelper.CREATE);
 
-        for (int i = 0; i < 20; i++) {
+        /*for (int i = 0; i < 20; i++) {
             ContentValues values = new ContentValues();
 
             values.put(MovieTableHelper.TITLE, "Title N°" + i);
             values.put(MovieTableHelper.IS_WISHLIST, i % 3 == 0 ? 1 : 0);
 
             db.insert(MovieTableHelper.TABLE_NAME, null, values);
-        }
+        }*/
     }
 
     @Override
