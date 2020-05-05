@@ -8,15 +8,24 @@ import android.view.ViewGroup;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
+import java.util.List;
+
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.activities.MainActivity;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
+import it.alessandromarchi.movieapp.models.Movie;
 
 public class MovieAdapter extends CursorAdapter {
+
+    private List<Movie> movies;
 
     //TODO aggiornare con metodo non deprecato
     public MovieAdapter(Context context, Cursor c) {
         super(context, c);
+    }
+
+    public void setMovie(List<Movie> movies) {
+        this.movies = movies;
     }
 
     @Override
