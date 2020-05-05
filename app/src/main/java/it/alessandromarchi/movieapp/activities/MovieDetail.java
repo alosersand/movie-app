@@ -15,6 +15,7 @@ import it.alessandromarchi.movieapp.database.MovieTableHelper;
 public class MovieDetail extends AppCompatActivity {
 
     TextView title;
+	TextView description;
 
     SQLiteDatabase database;
     MovieDB movieDB;
@@ -25,6 +26,7 @@ public class MovieDetail extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         title = findViewById(R.id.detail_title);
+			description = findViewById(R.id.detail_description);
 
         movieDB = new MovieDB(this);
         database = movieDB.getReadableDatabase();
@@ -35,7 +37,7 @@ public class MovieDetail extends AppCompatActivity {
         Cursor movies = database.query(
                 MovieTableHelper.TABLE_NAME,
                 new String[]{
-                        MovieTableHelper.IS_WISHLIST,
+												MovieTableHelper.DESCRIPTION,
                         MovieTableHelper.TITLE,
                         MovieTableHelper._ID
                 },
@@ -48,7 +50,9 @@ public class MovieDetail extends AppCompatActivity {
 
         movies.moveToNext();
         if (movies.getCount() >= 1) {
-            title.setText(getString(R.string.TMP, movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_WISHLIST))));
+					title.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
+					description.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.DESCRIPTION)));
+
             setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
         } else {
             title.setText(R.string.database_read_error);
