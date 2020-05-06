@@ -7,12 +7,11 @@
     android:padding="16dp">
 
     <ImageView
-        android:tint="@color/colorPrimary"
         android:id="@+id/row_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_movie"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,19 +22,9 @@
         android:layout_marginStart="16dp"
         android:text="@string/title"
         app:layout_constraintBottom_toBottomOf="@+id/row_image"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/row_image"
         app:layout_constraintTop_toTopOf="@+id/row_image" />
-
-    <ImageView
-        android:id="@+id/row_wishlist"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_star"
-        android:tint="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

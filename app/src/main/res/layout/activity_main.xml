@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:numColumns="2"
-        tools:listitem="@layout/movie_item"></GridView>
+        tools:listitem="@layout/movie_item" />
 
     <ProgressBar
         android:id="@+id/progressBar"

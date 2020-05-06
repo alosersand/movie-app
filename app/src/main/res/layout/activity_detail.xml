@@ -12,10 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:tint="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_movie" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
