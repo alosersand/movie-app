@@ -5,29 +5,27 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.activities.MainActivity;
+import it.alessandromarchi.movieapp.activities.Wishlist;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
-import it.alessandromarchi.movieapp.models.Movie;
 
 public class MovieAdapter extends CursorAdapter {
 
-    private List<Movie> movies;
+	public static String IMAGES_BASE_URL = "https://image.tmdb.org/t/p/original";
 
     //TODO aggiornare con metodo non deprecato
     public MovieAdapter(Context context, Cursor c) {
         super(context, c);
     }
 
-    public void setMovie(List<Movie> movies) {
-        this.movies = movies;
-    }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -48,19 +46,35 @@ public class MovieAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
 //        int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
 			String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
-			String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
-//        String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
+			// String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
+			String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
         int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
 
+			ImageView imageView;
+
 			if (context instanceof MainActivity) {
+				imageView = view.findViewById(R.id.grid_item);
+				Picasso.get()
+								.load(IMAGES_BASE_URL + imagePath)
+								.placeholder(R.drawable.ic_movie)
+								.error(R.drawable.ic_error)
+								.into(imageView);
+
 				if (isWishlist == 1) {
 					view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
 				} else {
 					view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
 				}
-			} else { // WISHLIST
+			} else if (context instanceof Wishlist) {
 				TextView rowTitle = view.findViewById(R.id.row_title);
 				rowTitle.setText(title);
+
+				imageView = view.findViewById(R.id.row_image);
+				Picasso.get()
+								.load(IMAGES_BASE_URL + imagePath)
+								.placeholder(R.drawable.ic_movie)
+								.error(R.drawable.ic_error)
+								.into(imageView);
 			}
 
 
