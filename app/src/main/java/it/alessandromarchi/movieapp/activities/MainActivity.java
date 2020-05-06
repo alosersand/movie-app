@@ -25,6 +25,7 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import java.util.List;
+import java.util.Locale;
 
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.adapters.MovieAdapter;
@@ -41,6 +42,8 @@ import it.alessandromarchi.movieapp.services.iWebServer;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
 	private static final int LOADER_ID = 568175;
+
+	public static Locale locale;
 
 	List<Movie> movies;
 
@@ -59,14 +62,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			if (success) {
 				movies = _TMDBResponse.getMovies();
 
-				Log.d("boi", "onMoviesFetched: " + movies);
-
 				ContentValues values = new ContentValues();
 				for (Movie movie : movies) {
 					values.put(MovieTableHelper.TITLE, movie.getTitle());
 					values.put(MovieTableHelper.DESCRIPTION, movie.getDescription());
+					values.put(MovieTableHelper.IMAGE_PATH, movie.getImagePath());
+					values.put(MovieTableHelper.BACKGROUND_PATH, movie.getBackgroundPath());
+
+					getContentResolver().insert(MovieProvider.MOVIES_URI, values);
 				}
-				getContentResolver().insert(MovieProvider.MOVIES_URI, values);
+
+				Log.d("TAG", "onMoviesFetched: " + movies.get(5).getImagePath());
 
 				movieAdapter.notifyDataSetChanged();
 
@@ -103,13 +109,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		locale = getResources().getConfiguration().locale;
+
 		webService = WebService.getInstance();
 
 		movieDB = new MovieDB(this);
 		movieAdapter = new MovieAdapter(this, null);
 
 		progressBar = findViewById(R.id.progressBar);
-
 		moviesGrid = findViewById(R.id.movies_grid);
 
 		webService.getMovies(webServerListener);
@@ -189,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		ContentValues values = new ContentValues();
 		values.put(MovieTableHelper.IS_WISHLIST, 1);
 
-		int uri = getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
+		getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
 
 		Toast.makeText(this, R.string.wishlist_add, Toast.LENGTH_SHORT).show();
 	}
