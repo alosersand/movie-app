@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +51,7 @@ public class ConfirmDialogFragment extends DialogFragment {
 			String positiveButton;
 
         alertDialog.setTitle(title);
-        alertDialog.setMessage(message);
+			alertDialog.setMessage(Html.fromHtml(message));
 
 			if (title.equals(getString(R.string.add_title))) {
 				positiveButton = getString(R.string.add);

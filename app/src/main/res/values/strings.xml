@@ -8,11 +8,11 @@
     <string name="TMP" translatable="false">isWishlist = %d</string>
 
     <string name="dialog_add_error_confirm">Aggiungere il Film alla Wishlist?</string>
-    <string name="dialog_add_confirm">Aggiungere %s alla Wishlist?</string>
+    <string name="dialog_add_confirm">Aggiungere &lt;i>%s&lt;/i> alla Wishlist?</string>
     <string name="wishlist_add">Aggiunto alla Wishlist</string>
 
     <string name="dialog_remove_error_confirm">Rimuovere il Film alla Wishlist?</string>
-    <string name="dialog_remove_confirm">Rimuovere %s alla Wishlist?</string>
+    <string name="dialog_remove_confirm">Rimuovere &lt;i>%s&lt;/i> alla Wishlist?</string>
     <string name="wishlist_remove">Rimosso dalla Wishlist</string>
 
     <string name="add">aggiungi</string>
