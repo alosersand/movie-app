@@ -16,6 +16,6 @@ public class MovieTableHelper implements BaseColumns {
             TITLE + " TEXT, " +
             DESCRIPTION + " TEXT, " +
             IMAGE_PATH + " TEXT, " +
-						BACKGROUND_PATH + " TEXT, " +
+			BACKGROUND_PATH + " TEXT, " +
             IS_WISHLIST + " INTEGER DEFAULT 0);";
 }
