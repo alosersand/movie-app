@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	GridView moviesGrid;
 	MenuItem actionWishlist;
+	MenuItem actionSearch;
 	ProgressBar progressBar;
 
 	WebService webService;
@@ -61,18 +62,51 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
 			if (success) {
 				movies = _TMDBResponse.getMovies();
+				int moviesSize = movies.size();
 
 				ContentValues values = new ContentValues();
-				for (Movie movie : movies) {
-					values.put(MovieTableHelper.TITLE, movie.getTitle());
-					values.put(MovieTableHelper.DESCRIPTION, movie.getDescription());
-					values.put(MovieTableHelper.IMAGE_PATH, movie.getImagePath());
-					values.put(MovieTableHelper.BACKGROUND_PATH, movie.getBackgroundPath());
 
-					getContentResolver().insert(MovieProvider.MOVIES_URI, values);
+				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+						MovieTableHelper._ID,
+						MovieTableHelper.TITLE
+				}, null, null, null, null);
+
+				if (titles != null && titles.getCount() != 0) {
+//					titles.moveToFirst();
+
+					for (int i = 0; i < moviesSize; i++) {
+						values.put(MovieTableHelper.TITLE, movies.get(i).getTitle());
+						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
+						values.put(MovieTableHelper.IMAGE_PATH, movies.get(i).getImagePath());
+						values.put(MovieTableHelper.BACKGROUND_PATH, movies.get(i).getBackgroundPath());
+
+						titles.moveToPosition(i);
+
+						Log.d("TAG", "TITLES(" + i + "): " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)));
+						Log.d("TAG", "MOVIES(" + i + "): " + movies.get(i).getTitle());
+
+						if (titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)).equals(movies.get(i).getTitle())) {
+							Log.d("TAG", "UPDATE");
+							getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + i), values, null, null);
+						} else {
+							Log.d("TAG", "INSERT");
+							getContentResolver().insert(MovieProvider.MOVIES_URI, values);
+						}
+					}
+
+					titles.close();
+				} else {
+					Log.d("TAG", "NEW INSERT");
+
+					for (int i = 0; i < moviesSize; i++) {
+						values.put(MovieTableHelper.TITLE, movies.get(i).getTitle());
+						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
+						values.put(MovieTableHelper.IMAGE_PATH, movies.get(i).getImagePath());
+						values.put(MovieTableHelper.BACKGROUND_PATH, movies.get(i).getBackgroundPath());
+
+						getContentResolver().insert(MovieProvider.MOVIES_URI, values);
+					}
 				}
-
-				Log.d("TAG", "onMoviesFetched: " + movies.get(5).getImagePath());
 
 				movieAdapter.notifyDataSetChanged();
 
@@ -96,6 +130,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			public boolean onMenuItemClick(MenuItem item) {
 				Intent wishlist = new Intent(MainActivity.this, Wishlist.class);
 				startActivity(wishlist);
+
+				return true;
+			}
+		});
+
+		actionSearch = menu.getItem(1);
+		actionSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				Log.d("TAG", "DELETE ALL");
+				getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
 
 				return true;
 			}
@@ -136,29 +181,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				FragmentManager fragmentManager = getSupportFragmentManager();
 				ConfirmDialogFragment dialogFragment;
 
-				database = movieDB.getReadableDatabase();
-				Cursor titles = database.query(
-								MovieTableHelper.TABLE_NAME,
-								new String[]{
-												MovieTableHelper.TITLE,
-												MovieTableHelper._ID
-								},
-								MovieTableHelper._ID + " = " + id,
-								null,
-								null,
-								null,
-								null
-				);
+				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+						MovieTableHelper.TITLE,
+						MovieTableHelper._ID
+				}, MovieTableHelper._ID + " = " + id, null, null, null);
 
-				titles.moveToNext();
-				if (titles.getCount() >= 1) {
-					dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
+
+				if (titles != null && titles.getCount() != 0) {
+					titles.moveToNext();
+
+					if (titles.getCount() >= 1) {
+						dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
+					} else {
+						dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
+					}
+
+					dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+
+					titles.close();
 				} else {
-					dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
-				}
-				titles.close();
 
-				dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
+				}
+
 
 				return true;
 			}
