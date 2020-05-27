@@ -3,9 +3,11 @@ package it.alessandromarchi.movieapp.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.adapters.MovieAdapter;
 import it.alessandromarchi.movieapp.database.MovieDB;
+import it.alessandromarchi.movieapp.database.MovieProvider;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
 
 public class MovieDetail extends AppCompatActivity {
@@ -39,39 +42,39 @@ public class MovieDetail extends AppCompatActivity {
 		Intent intent = getIntent();
 		long id = intent.getLongExtra("movie_id", 0);
 
-		Cursor movies = database.query(
-						MovieTableHelper.TABLE_NAME,
-						new String[]{
-										MovieTableHelper.BACKGROUND_PATH,
-										MovieTableHelper.DESCRIPTION,
-										MovieTableHelper.TITLE,
-										MovieTableHelper._ID
-						},
-						MovieTableHelper._ID + " = " + id,
-						null,
-						null,
-						null,
-						null
-		);
+		Cursor movies = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+				MovieTableHelper.BACKGROUND_PATH,
+				MovieTableHelper.DESCRIPTION,
+				MovieTableHelper.TITLE,
+				MovieTableHelper._ID
+		}, MovieTableHelper._ID + " = " + id, null, null, null);
 
-		movies.moveToNext();
-		if (movies.getCount() >= 1) {
-			title.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
-			description.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.DESCRIPTION)));
 
-			Picasso.get()
-							.load(MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)))
-							.placeholder(R.drawable.ic_movie)
-							.error(R.drawable.ic_error)
-							.into(detailIamge);
+		if (movies != null && movies.getCount() != 0) {
+			movies.moveToNext();
+			if (movies.getCount() >= 1) {
+				title.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
+				description.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.DESCRIPTION)));
 
-			setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
+				Picasso.get()
+						.load(MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)))
+						.placeholder(R.drawable.ic_movie)
+						.error(R.drawable.ic_error)
+						.into(detailIamge);
+
+				setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
+			} else {
+				title.setText(R.string.database_read_error);
+				setTitle(R.string.app_name);
+			}
+
+			movies.close();
 		} else {
-			title.setText(R.string.database_read_error);
-			setTitle(R.string.app_name);
+			Toast.makeText(this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
 		}
 
-		movies.close();
+
+
 		database.close();
 	}
 }

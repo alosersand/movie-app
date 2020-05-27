@@ -28,92 +28,102 @@ import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
 
 public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
-    private static final int LOADER_ID = 871462;
+	private static final int LOADER_ID = 871462;
 
 	SQLiteDatabase database;
-    MovieDB movieDB;
-    MovieAdapter movieAdapter;
+	MovieDB movieDB;
+	MovieAdapter movieAdapter;
 
-    ListView moviesList;
+	ListView moviesList;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wishlist);
-        setTitle(R.string.wishlist);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_wishlist);
+		setTitle(R.string.wishlist);
 
-        movieDB = new MovieDB(this);
-        movieAdapter = new MovieAdapter(this, null);
+		movieDB = new MovieDB(this);
+		movieAdapter = new MovieAdapter(this, null);
 
-        moviesList = findViewById(R.id.movies_list);
-        moviesList.setAdapter(movieAdapter);
-			moviesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-					FragmentManager fragmentManager = getSupportFragmentManager();
-					ConfirmDialogFragment dialogFragment;
+		moviesList = findViewById(R.id.movies_list);
+		moviesList.setAdapter(movieAdapter);
+		moviesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				FragmentManager fragmentManager = getSupportFragmentManager();
+				ConfirmDialogFragment dialogFragment;
 
-					database = movieDB.getReadableDatabase();
-					Cursor titles = database.query(
-									MovieTableHelper.TABLE_NAME,
-									new String[]{
-													MovieTableHelper.TITLE,
-													MovieTableHelper._ID
-									},
-									MovieTableHelper._ID + " = " + id,
-									null,
-									null,
-									null,
-									null
-					);
+				database = movieDB.getReadableDatabase();
+//					Cursor titles = database.query(
+//									MovieTableHelper.TABLE_NAME,
+//									new String[]{
+//													MovieTableHelper.TITLE,
+//													MovieTableHelper._ID
+//									},
+//									MovieTableHelper._ID + " = " + id,
+//									null,
+//									null,
+//									null,
+//									null
+//					);
 
+				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+						MovieTableHelper.TITLE,
+						MovieTableHelper._ID
+				}, MovieTableHelper._ID + " = " + id, null, null, null);
+
+
+				if (titles != null && titles.getCount() != 0) {
 					titles.moveToNext();
 					if (titles.getCount() >= 1) {
 						dialogFragment = new ConfirmDialogFragment(getString(R.string.remove_title), getString(R.string.dialog_remove_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
 					} else {
 						dialogFragment = new ConfirmDialogFragment(getString(R.string.remove_title), getString(R.string.dialog_remove_error_confirm), id);
 					}
+
 					titles.close();
 
 					dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
-
-					return true;
 				}
-			});
 
-        //TODO aggiornare con metodo non deprecato
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+				return true;
+			}
+		});
 
-        movieAdapter.notifyDataSetChanged();
-    }
+		//TODO aggiornare con metodo non deprecato
+		getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+	}
 
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return new CursorLoader(
-                this,
-                MovieProvider.MOVIES_URI,
-                null,
-                MovieTableHelper.IS_WISHLIST + " = " + 1,
-                null,
-                null
-        );
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
 
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        movieAdapter.changeCursor(data);
-    }
+		movieAdapter.notifyDataSetChanged();
+	}
 
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        movieAdapter.changeCursor(null);
-    }
+	@NonNull
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+		return new CursorLoader(
+				this,
+				MovieProvider.MOVIES_URI,
+				null,
+				MovieTableHelper.IS_WISHLIST + " = " + 1,
+				null,
+				null
+		);
+	}
+
+	@Override
+	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+		movieAdapter.changeCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+		movieAdapter.changeCursor(null);
+	}
 
 	@Override
 	public void onPositivePressed(long movieID) {
