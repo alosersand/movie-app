@@ -3,7 +3,6 @@ package it.alessandromarchi.movieapp.activities;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	List<Movie> movies;
 
-	SQLiteDatabase database;
 	MovieDB movieDB;
 	MovieAdapter movieAdapter;
 
@@ -71,9 +69,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 						MovieTableHelper.TITLE
 				}, null, null, null, null);
 
-				if (titles != null && titles.getCount() != 0) {
-//					titles.moveToFirst();
-
+				if (titles != null && titles.getCount() >= 1) {
 					for (int i = 0; i < moviesSize; i++) {
 						values.put(MovieTableHelper.TITLE, movies.get(i).getTitle());
 						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
@@ -82,19 +78,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 						titles.moveToPosition(i);
 
-						Log.d("TAG", "TITLES(" + i + "): " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)));
-						Log.d("TAG", "MOVIES(" + i + "): " + movies.get(i).getTitle());
+//						Log.d("TAG", "TITLES(" + i + "): " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)));
+//						Log.d("TAG", "MOVIES(" + i + "): " + movies.get(i).getTitle());
 
 						if (titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)).equals(movies.get(i).getTitle())) {
-							Log.d("TAG", "UPDATE");
+//							Log.d("TAG", "UPDATE");
 							getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + i), values, null, null);
 						} else {
-							Log.d("TAG", "INSERT");
+//							Log.d("TAG", "INSERT");
 							getContentResolver().insert(MovieProvider.MOVIES_URI, values);
 						}
 					}
 
 					titles.close();
+
 				} else {
 					Log.d("TAG", "NEW INSERT");
 
@@ -135,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			}
 		});
 
+		// TMP
 		actionSearch = menu.getItem(1);
 		actionSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
@@ -172,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
 				movieDetail.putExtra("movie_id", id);
+
 				startActivity(movieDetail);
 			}
 		});
@@ -182,25 +181,53 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				ConfirmDialogFragment dialogFragment;
 
 				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+						MovieTableHelper.IS_WISHLIST,
 						MovieTableHelper.TITLE,
 						MovieTableHelper._ID
 				}, MovieTableHelper._ID + " = " + id, null, null, null);
 
+				// RISCRIVERE
+//				if (titles != null && titles.getCount() >= 1) {
+//					titles.moveToNext();
+//
+//					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
+//
+//						if (titles.getCount() >= 1) {
+//
+//
+//							dialogFragment = new ConfirmDialogFragment(
+//									getString(R.string.add_title),
+//									getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
+//									id);
+//						} else {
+//							dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
+//						}
+//
+//						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+//					}
+//					titles.close();
+//				} else {
+//					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
+//				}
+				// ----
 
-				if (titles != null && titles.getCount() != 0) {
+
+				if (titles != null && titles.getCount() >= 1) {
 					titles.moveToNext();
 
-					if (titles.getCount() >= 1) {
-						dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
-					} else {
-						dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
-					}
+					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
+						dialogFragment = new ConfirmDialogFragment(
+								getString(R.string.add_title),
+								getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
+								id);
 
-					dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+					} else {
+						Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
+					}
 
 					titles.close();
 				} else {
-
 					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
 				}
 
@@ -238,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	@Override
 	public void onPositivePressed(long movieID) {
+
 		ContentValues values = new ContentValues();
 		values.put(MovieTableHelper.IS_WISHLIST, 1);
 
