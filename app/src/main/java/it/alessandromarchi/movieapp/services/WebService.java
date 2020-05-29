@@ -17,7 +17,7 @@ public class WebService {
 	private String MOVIES_BASE_URL = "https://api.themoviedb.org/";
 	private String API_KEY = "5771171ef3fdb433ef45cd105f4b541f";
 	private String LANGUAGE = MainActivity.locale.toString();
-	private String PAGE = "1";
+//	private String PAGE = "1";
 	private String REGION = MainActivity.locale.getCountry();
 	private String VERSION = "3";
 	private String CATEGORY = "popular";
@@ -39,8 +39,8 @@ public class WebService {
 		return instance;
 	}
 
-	public void getMovies(final iWebServer listener) {
-		Call<TMDBResponse> response = iMovieService.getResponse(VERSION, CATEGORY, API_KEY, LANGUAGE, PAGE, REGION);
+	public void getMovies(final iWebServer listener, String page) {
+		Call<TMDBResponse> response = iMovieService.getResponse(VERSION, CATEGORY, API_KEY, LANGUAGE, page, REGION);
 
 		response.enqueue(new Callback<TMDBResponse>() {
 			@Override
