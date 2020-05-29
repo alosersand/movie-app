@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -43,6 +44,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	private static final int LOADER_ID = 568175;
 
 	public static Locale locale;
+
+	int offset;
+	int position;
+	int threshold;
+	int page;
 
 	List<Movie> movies;
 
@@ -137,8 +143,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		actionSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Log.d("TAG", "DELETE ALL");
-				getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
+//				Log.d("TAG", "DELETE ALL");
+//				getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
+
+				webService.getMovies(webServerListener, "2");
+
+				movieAdapter.notifyDataSetChanged();
 
 				return true;
 			}
@@ -162,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		progressBar = findViewById(R.id.progressBar);
 		moviesGrid = findViewById(R.id.movies_grid);
 
-		webService.getMovies(webServerListener);
+		page = 1;
+		webService.getMovies(webServerListener, "" + page);
 
 		moviesGrid.setAdapter(movieAdapter);
 		moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -186,30 +197,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 						MovieTableHelper._ID
 				}, MovieTableHelper._ID + " = " + id, null, null, null);
 
-				// RISCRIVERE
-//				if (titles != null && titles.getCount() >= 1) {
-//					titles.moveToNext();
-//
-//					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
-//
-//						if (titles.getCount() >= 1) {
-//
-//
-//							dialogFragment = new ConfirmDialogFragment(
-//									getString(R.string.add_title),
-//									getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
-//									id);
-//						} else {
-//							dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
-//						}
-//
-//						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
-//					}
-//					titles.close();
-//				} else {
-//					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
-//				}
-				// ----
 
 
 				if (titles != null && titles.getCount() >= 1) {
@@ -233,6 +220,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
 				return true;
+			}
+		});
+
+		moviesGrid.setOnScrollListener(new AbsListView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//				Log.d("TAG", "onScroll: " + totalItemCount);
+//
+//
+//				offset = 1;
+//				position = firstVisibleItem + visibleItemCount;
+//				threshold = totalItemCount - offset;
+//
+//				if (totalItemCount > 0 && position >= threshold) {
+//					offset = -99;
+//					Log.d("TAG", "onScroll: FETCH");
+//
+//					webService.getMovies(webServerListener, "" + ++page);
+//
+//					movieAdapter.notifyDataSetChanged();
+//				}
+
+
 			}
 		});
 
