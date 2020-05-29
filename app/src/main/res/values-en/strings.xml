@@ -4,9 +4,9 @@
     <string name="title">Title</string>
     <string name="search">Search</string>
     <string name="dialog_add_confirm">Add &lt;i>%s&lt;/i> to Wishlist?</string>
-    <string name="dialog_add_error_confirm">Add Film to Wishlist?</string>
-    <string name="database_write_error">Error in writing database</string>
-    <string name="database_read_error">Error on reading database</string>
+    <string name="dialog_add_error_confirm">Add Movie to Wishlist?</string>
+    <string name="database_write_error">Error writing database</string>
+    <string name="database_read_error">Error reading database</string>
     <string name="wishlist_add">Added to Wishlist</string>
     <string name="add">add</string>
     <string name="cancel">cancel</string>
@@ -16,5 +16,8 @@
     <string name="wishlist_remove">Removed from Wishlist</string>
     <string name="remove">remove</string>
     <string name="add_title">Add</string>
-    <string name="remove_title">remove</string>
+    <string name="remove_title">Remove</string>
+    <string name="already_isWishlist">Movie Already in wishlist</string>
+    <string name="toggle_wishlist">Toggle Wishlist</string>
+    <string name="film_image" translatable="false">Film Image</string>
 </resources>

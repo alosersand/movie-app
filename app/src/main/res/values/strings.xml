@@ -22,4 +22,7 @@
 
     <string name="add_title">Aggiungi</string>
     <string name="remove_title">Rimuovi</string>
+    <string name="already_isWishlist">Questo film è già nella Wishlist</string>
+    <string name="film_image">Immagine Film</string>
+    <string name="toggle_wishlist">Alterna Wishliat</string>
 </resources>
