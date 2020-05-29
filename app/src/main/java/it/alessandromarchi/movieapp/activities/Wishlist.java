@@ -1,8 +1,8 @@
 package it.alessandromarchi.movieapp.activities;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +30,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 
 	private static final int LOADER_ID = 871462;
 
-	SQLiteDatabase database;
+	//	SQLiteDatabase database;
 	MovieDB movieDB;
 	MovieAdapter movieAdapter;
 
@@ -53,7 +53,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 				FragmentManager fragmentManager = getSupportFragmentManager();
 				ConfirmDialogFragment dialogFragment;
 
-				database = movieDB.getReadableDatabase();
+//				database = movieDB.getReadableDatabase();
 //					Cursor titles = database.query(
 //									MovieTableHelper.TABLE_NAME,
 //									new String[]{
@@ -73,7 +73,7 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 				}, MovieTableHelper._ID + " = " + id, null, null, null);
 
 
-				if (titles != null && titles.getCount() != 0) {
+				if (titles != null) {
 					titles.moveToNext();
 					if (titles.getCount() >= 1) {
 						dialogFragment = new ConfirmDialogFragment(getString(R.string.remove_title), getString(R.string.dialog_remove_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))), id);
@@ -88,6 +88,16 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 
 
 				return true;
+			}
+		});
+
+		moviesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent movieDetail = new Intent(Wishlist.this, MovieDetail.class);
+				movieDetail.putExtra("movie_id", id);
+
+				startActivity(movieDetail);
 			}
 		});
 
