@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
-import com.squareup.picasso.Picasso;
-
+import it.alessandromarchi.movieapp.PicassoWrapper;
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.activities.MainActivity;
 import it.alessandromarchi.movieapp.activities.Wishlist;
@@ -54,11 +53,14 @@ public class MovieAdapter extends CursorAdapter {
 
 		if (context instanceof MainActivity) {
 			imageView = view.findViewById(R.id.grid_item);
-			Picasso.get()
-					.load(IMAGES_BASE_URL + imagePath)
-					.placeholder(R.drawable.ic_movie)
-					.error(R.drawable.ic_error)
-					.into(imageView);
+
+//			Picasso.get()
+//					.load(IMAGES_BASE_URL + imagePath)
+//					.placeholder(R.drawable.ic_movie)
+//					.error(R.drawable.ic_error)
+//					.into(imageView);
+
+			PicassoWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
 
 			if (isWishlist == 1) {
 				view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
@@ -70,11 +72,13 @@ public class MovieAdapter extends CursorAdapter {
 			rowTitle.setText(title);
 
 			imageView = view.findViewById(R.id.row_image);
-			Picasso.get()
-					.load(IMAGES_BASE_URL + imagePath)
-					.placeholder(R.drawable.ic_movie)
-					.error(R.drawable.ic_error)
-					.into(imageView);
+//			Picasso.get()
+//					.load(IMAGES_BASE_URL + imagePath)
+//					.placeholder(R.drawable.ic_movie)
+//					.error(R.drawable.ic_error)
+//					.into(imageView);
+
+			PicassoWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
 		}
 
 
