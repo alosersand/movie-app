@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MovieApp</string>
-    <string name="title">Title</string>
+    <string name="rating_text">Title</string>
     <string name="search">Search</string>
     <string name="dialog_add_confirm">Add &lt;i>%s&lt;/i> to Wishlist?</string>
     <string name="dialog_add_error_confirm">Add Movie to Wishlist?</string>
