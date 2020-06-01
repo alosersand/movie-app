@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    >
 
     <ImageView
+        android:layout_width="60dp"
         android:id="@+id/row_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="90dp"
+        android:transitionName="imageTransition"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,10 +18,11 @@
 
     <TextView
         android:id="@+id/row_title"
+        android:text="@string/rating_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/title"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/row_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/row_image"
