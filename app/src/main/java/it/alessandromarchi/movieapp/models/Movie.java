@@ -17,20 +17,24 @@ public class Movie {
 
 	private int isWishlist;
 
-	public Movie(String title, String description, String imagePath, String backgroundPath, int isWishlist) {
+	@SerializedName("vote_average")
+	private float rating;
+
+
+	public Movie(String title, String description, String imagePath, String backgroundPath, int isWishlist, float rating) {
 		this.title = title;
 		this.description = description;
 		this.imagePath = imagePath;
 		this.backgroundPath = backgroundPath;
 		this.isWishlist = isWishlist;
+		this.rating = rating;
 	}
 
-	// GETTER
+
 	public String getTitle() {
 		return title;
 	}
 
-	// SETTER
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -62,4 +66,17 @@ public class Movie {
 	public void setIsWishlist(int isWishlist) {
 		this.isWishlist = isWishlist;
 	}
+
+	public void setBackgroundPath(String backgroundPath) {
+		this.backgroundPath = backgroundPath;
+	}
+
+	public float getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
-import it.alessandromarchi.movieapp.PicassoWrapper;
+import it.alessandromarchi.movieapp.GlideWrapper;
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.activities.MainActivity;
 import it.alessandromarchi.movieapp.activities.Wishlist;
@@ -60,7 +60,7 @@ public class MovieAdapter extends CursorAdapter {
 //					.error(R.drawable.ic_error)
 //					.into(imageView);
 
-			PicassoWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
+			GlideWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
 
 			if (isWishlist == 1) {
 				view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
@@ -78,7 +78,7 @@ public class MovieAdapter extends CursorAdapter {
 //					.error(R.drawable.ic_error)
 //					.into(imageView);
 
-			PicassoWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
+			GlideWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
 		}
 
 

@@ -1,5 +1,6 @@
 package it.alessandromarchi.movieapp.activities;
 
+import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
 						values.put(MovieTableHelper.IMAGE_PATH, movies.get(i).getImagePath());
 						values.put(MovieTableHelper.BACKGROUND_PATH, movies.get(i).getBackgroundPath());
+						values.put(MovieTableHelper.RATING, movies.get(i).getRating());
 
 						titles.moveToPosition(i);
 
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
 						values.put(MovieTableHelper.IMAGE_PATH, movies.get(i).getImagePath());
 						values.put(MovieTableHelper.BACKGROUND_PATH, movies.get(i).getBackgroundPath());
+						values.put(MovieTableHelper.RATING, movies.get(i).getRating());
 
 						getContentResolver().insert(MovieProvider.MOVIES_URI, values);
 					}
@@ -147,10 +150,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		return true;
 	}
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+//		getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+
+//		getWindow().setExitTransition(new Explode());
 
 		locale = getResources().getConfiguration().locale;
 
@@ -171,7 +181,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
 				movieDetail.putExtra("movie_id", id);
 
-				startActivity(movieDetail);
+//				final View star = view.findViewById(R.id.grid_item_star);
+//
+//				Pair[] pairs = new Pair[2];
+//				pairs[0] = new Pair<View, String>(view, "imageTransition");
+//				pairs[1] = new Pair<View, String>(star, "starTransition");
+
+				ActivityOptions options = ActivityOptions
+						.makeSceneTransitionAnimation(MainActivity.this, view, "imageTransition");
+
+//				ActivityOptions options = ActivityOptions
+//						.makeSceneTransitionAnimation(MainActivity.this, pairs);
+
+
+				startActivity(movieDetail, options.toBundle());
 			}
 		});
 		moviesGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

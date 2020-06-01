@@ -8,12 +8,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import it.alessandromarchi.movieapp.PicassoWrapper;
+import it.alessandromarchi.movieapp.GlideWrapper;
 import it.alessandromarchi.movieapp.R;
 import it.alessandromarchi.movieapp.adapters.MovieAdapter;
 import it.alessandromarchi.movieapp.database.MovieDB;
@@ -21,9 +22,10 @@ import it.alessandromarchi.movieapp.database.MovieProvider;
 import it.alessandromarchi.movieapp.database.MovieTableHelper;
 
 public class MovieDetail extends AppCompatActivity {
-	TextView title;
+	TextView ratingText;
 	TextView description;
 	ImageView detailIamge;
+	RatingBar ratingBar;
 
 	SQLiteDatabase database;
 	MovieDB movieDB;
@@ -35,9 +37,10 @@ public class MovieDetail extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_detail);
 
-		title = findViewById(R.id.detail_title);
+		ratingText = findViewById(R.id.rating_text);
 		description = findViewById(R.id.detail_description);
 		detailIamge = findViewById(R.id.detail_image);
+		ratingBar = findViewById(R.id.rating_bar);
 
 		movieDB = new MovieDB(this);
 		database = movieDB.getReadableDatabase();
@@ -46,10 +49,10 @@ public class MovieDetail extends AppCompatActivity {
 		long id = intent.getLongExtra("movie_id", 0);
 
 		Cursor movies = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
-				MovieTableHelper.BACKGROUND_PATH,
-				MovieTableHelper.DESCRIPTION,
+				MovieTableHelper.IMAGE_PATH,
 				MovieTableHelper.TITLE,
-				MovieTableHelper.IS_WISHLIST,
+				MovieTableHelper.DESCRIPTION,
+				MovieTableHelper.RATING,
 				MovieTableHelper._ID
 		}, MovieTableHelper._ID + " = " + id, null, null, null);
 
@@ -57,14 +60,13 @@ public class MovieDetail extends AppCompatActivity {
 		if (movies != null && movies.getCount() >= 1) {
 			movies.moveToNext();
 
+			float rawStars = movies.getFloat(movies.getColumnIndex(MovieTableHelper.RATING));
+			float stars = rawStars / 2;
 
-			if (movies.getInt(movies.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 1) {
-				title.setCompoundDrawablesWithIntrinsicBounds(
-						0, 0, R.drawable.ic_star, 0);
-
-			}
-
-			title.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
+			ratingBar.setRating(stars);
+			ratingText.setText("" + rawStars);
+			ratingText.setCompoundDrawablesWithIntrinsicBounds(
+					0, 0, R.drawable.ic_star, 0);
 
 			description.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.DESCRIPTION)) + "\n");
 			description.setMovementMethod(new ScrollingMovementMethod());
@@ -75,7 +77,7 @@ public class MovieDetail extends AppCompatActivity {
 //					.error(R.drawable.ic_error)
 //					.into(detailIamge);
 
-			PicassoWrapper.setImage(this, MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)), detailIamge);
+			GlideWrapper.setImage(this, MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.IMAGE_PATH)), detailIamge);
 
 
 			setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));
@@ -84,7 +86,7 @@ public class MovieDetail extends AppCompatActivity {
 			movies.close();
 		} else {
 			setTitle(R.string.app_name);
-			title.setText("");
+			ratingText.setText("");
 			Toast.makeText(this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
 		}
 

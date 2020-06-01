@@ -1,5 +1,6 @@
 package it.alessandromarchi.movieapp.activities;
 
+import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -97,7 +98,12 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 				Intent movieDetail = new Intent(Wishlist.this, MovieDetail.class);
 				movieDetail.putExtra("movie_id", id);
 
-				startActivity(movieDetail);
+
+				ActivityOptions options = ActivityOptions
+						.makeSceneTransitionAnimation(Wishlist.this, view, "imageTransition");
+
+
+				startActivity(movieDetail, options.toBundle());
 			}
 		});
 
