@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.activities;
+package it.alessandromarchi.moviest.activities;
 
 import android.app.ActivityOptions;
 import android.content.ContentValues;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -27,20 +28,21 @@ import androidx.loader.content.Loader;
 import java.util.List;
 import java.util.Locale;
 
-import it.alessandromarchi.movieapp.R;
-import it.alessandromarchi.movieapp.adapters.MovieAdapter;
-import it.alessandromarchi.movieapp.database.MovieDB;
-import it.alessandromarchi.movieapp.database.MovieProvider;
-import it.alessandromarchi.movieapp.database.MovieTableHelper;
-import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragment;
-import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
-import it.alessandromarchi.movieapp.models.Movie;
-import it.alessandromarchi.movieapp.models.TMDBResponse;
-import it.alessandromarchi.movieapp.services.WebService;
-import it.alessandromarchi.movieapp.services.iWebServer;
+import it.alessandromarchi.moviest.R;
+import it.alessandromarchi.moviest.adapters.MovieAdapter;
+import it.alessandromarchi.moviest.database.MovieDB;
+import it.alessandromarchi.moviest.database.MovieProvider;
+import it.alessandromarchi.moviest.database.MovieTableHelper;
+import it.alessandromarchi.moviest.fragments.ConfirmDialogFragment;
+import it.alessandromarchi.moviest.fragments.ConfirmDialogFragmentListener;
+import it.alessandromarchi.moviest.models.Movie;
+import it.alessandromarchi.moviest.models.TMDBResponse;
+import it.alessandromarchi.moviest.services.WebService;
+import it.alessandromarchi.moviest.services.iWebServer;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
+	public static final String TAG = "paradiddle";
 	private static final int LOADER_ID = 568175;
 
 	public static Locale locale;
@@ -51,9 +53,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	MovieAdapter movieAdapter;
 
 	GridView moviesGrid;
+	ProgressBar progressBar;
+
 	MenuItem actionWishlist;
 	MenuItem actionSearch;
-	ProgressBar progressBar;
+
+	SearchView searchView;
 
 	WebService webService;
 	iWebServer webServerListener = new iWebServer() {
@@ -119,15 +124,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		}
 	};
 
+//
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.action_menu, menu);
+		Log.d(TAG, "onCreateOptionsMenu: ");
 
-		actionWishlist = menu.getItem(0);
+		webService = WebService.getInstance();
+
+		actionWishlist = menu.findItem(R.id.action_wishlist);
 		actionWishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
+
 				Intent wishlist = new Intent(MainActivity.this, Wishlist.class);
 				startActivity(wishlist);
 
@@ -135,13 +146,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			}
 		});
 
-		// TMP
-		actionSearch = menu.getItem(1);
-		actionSearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+		actionSearch = menu.findItem(R.id.action_search);
+		searchView = (SearchView) actionSearch.getActionView();
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				Log.d("TAG", "DELETE ALL");
+			public boolean onQueryTextSubmit(String query) {
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+
 				getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
+
+				if (newText.length() > 0) {
+					webService.search(newText, true, webServerListener);
+				} else {
+					webService.getPopulars(webServerListener);
+				}
+
 
 				return true;
 			}
@@ -154,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 //		getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-
+		Log.d(TAG, "onCreate: ");
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -172,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		progressBar = findViewById(R.id.progressBar);
 		moviesGrid = findViewById(R.id.movies_grid);
 
-		webService.getMovies(webServerListener);
+		webService.getPopulars(webServerListener);
 
 		moviesGrid.setAdapter(movieAdapter);
 		moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {

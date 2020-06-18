@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.database;
+package it.alessandromarchi.moviest.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.models;
+package it.alessandromarchi.moviest.models;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.database;
+package it.alessandromarchi.moviest.database;
 
 import android.provider.BaseColumns;
 

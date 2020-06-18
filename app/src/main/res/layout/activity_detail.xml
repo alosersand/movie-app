@@ -8,12 +8,12 @@
 
 
     <ScrollView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -21,6 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!--            <androidx.viewpager2.widget.ViewPager2-->
+            <!--                android:id="@+id/pager"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="300dp"-->
+            <!--                android:transitionName="imageTransition"-->
+
+
+            <!--                />-->
+
 
             <ImageView
                 android:id="@+id/detail_image"
@@ -30,9 +40,11 @@
                 android:scaleType="centerCrop"
                 android:transitionName="imageTransition" />
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
@@ -50,11 +62,11 @@
 
                     android:id="@+id/rating_text"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="@string/rating_text"
                     android:textAlignment="center"
-                    android:textSize="35sp" />
+                    android:textSize="25sp" />
             </LinearLayout>
 
 

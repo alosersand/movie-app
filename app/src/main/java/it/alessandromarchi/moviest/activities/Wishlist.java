@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.activities;
+package it.alessandromarchi.moviest.activities;
 
 import android.app.ActivityOptions;
 import android.content.ContentValues;
@@ -19,13 +19,13 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-import it.alessandromarchi.movieapp.R;
-import it.alessandromarchi.movieapp.adapters.MovieAdapter;
-import it.alessandromarchi.movieapp.database.MovieDB;
-import it.alessandromarchi.movieapp.database.MovieProvider;
-import it.alessandromarchi.movieapp.database.MovieTableHelper;
-import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragment;
-import it.alessandromarchi.movieapp.fragments.ConfirmDialogFragmentListener;
+import it.alessandromarchi.moviest.R;
+import it.alessandromarchi.moviest.adapters.MovieAdapter;
+import it.alessandromarchi.moviest.database.MovieDB;
+import it.alessandromarchi.moviest.database.MovieProvider;
+import it.alessandromarchi.moviest.database.MovieTableHelper;
+import it.alessandromarchi.moviest.fragments.ConfirmDialogFragment;
+import it.alessandromarchi.moviest.fragments.ConfirmDialogFragmentListener;
 
 public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 

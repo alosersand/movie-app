@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.fragments;
+package it.alessandromarchi.moviest.fragments;
 
 public interface ConfirmDialogFragmentListener {
     void onPositivePressed(long movieID);

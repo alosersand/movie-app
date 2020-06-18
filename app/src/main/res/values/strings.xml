@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieApp</string>
+    <string name="app_name">Moviest</string>
     <string name="rating_text">Titolo</string>
     <string name="wishlist" translatable="false">Wishlist</string>
     <string name="search">Cerca</string>

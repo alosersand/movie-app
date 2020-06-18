@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp;
+package it.alessandromarchi.moviest;
 
 import android.content.Context;
 import android.widget.ImageView;

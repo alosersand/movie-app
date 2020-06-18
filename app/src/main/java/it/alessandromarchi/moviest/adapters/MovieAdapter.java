@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.adapters;
+package it.alessandromarchi.moviest.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import androidx.cursoradapter.widget.CursorAdapter;
 
-import it.alessandromarchi.movieapp.GlideWrapper;
-import it.alessandromarchi.movieapp.R;
-import it.alessandromarchi.movieapp.activities.MainActivity;
-import it.alessandromarchi.movieapp.activities.Wishlist;
-import it.alessandromarchi.movieapp.database.MovieTableHelper;
+import it.alessandromarchi.moviest.GlideWrapper;
+import it.alessandromarchi.moviest.R;
+import it.alessandromarchi.moviest.activities.MainActivity;
+import it.alessandromarchi.moviest.activities.Wishlist;
+import it.alessandromarchi.moviest.database.MovieTableHelper;
 
 public class MovieAdapter extends CursorAdapter {
 

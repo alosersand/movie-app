@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.fragments;
+package it.alessandromarchi.moviest.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import it.alessandromarchi.movieapp.R;
+import it.alessandromarchi.moviest.R;
 
 public class ConfirmDialogFragment extends DialogFragment {
 

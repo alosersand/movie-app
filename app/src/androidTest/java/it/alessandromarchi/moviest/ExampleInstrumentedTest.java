@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp;
+package it.alessandromarchi.moviest;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("it.alessandromarchi.movieapp", appContext.getPackageName());
+        assertEquals("it.alessandromarchi.moviest", appContext.getPackageName());
     }
 }

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.alessandromarchi.movieapp">
+    package="it.alessandromarchi.moviest">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_moviest_round"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_moviest_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
 
-            android:name=".activities.Wishlist"
-            android:parentActivityName=".activities.MainActivity" />
+            android:name="it.alessandromarchi.moviest.activities.Wishlist"
+            android:parentActivityName="it.alessandromarchi.moviest.activities.MainActivity" />
 
         <activity
 
-            android:name=".activities.MovieDetail"
-            android:parentActivityName=".activities.MainActivity" />
+            android:name="it.alessandromarchi.moviest.activities.MovieDetail"
+            android:parentActivityName="it.alessandromarchi.moviest.activities.MainActivity" />
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name="it.alessandromarchi.moviest.activities.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,8 +32,8 @@
         </activity>
 
         <provider
-            android:name=".database.MovieProvider"
-            android:authorities="it.alessandromarchi.movieapp.database.ContentProvider"
+            android:name="it.alessandromarchi.moviest.database.MovieProvider"
+            android:authorities="it.alessandromarchi.moviest.database.ContentProvider"
             android:exported="false" />
     </application>
 

@@ -1,5 +1,6 @@
-package it.alessandromarchi.movieapp.activities;
+package it.alessandromarchi.moviest.activities;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,17 +15,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import it.alessandromarchi.movieapp.GlideWrapper;
-import it.alessandromarchi.movieapp.R;
-import it.alessandromarchi.movieapp.adapters.MovieAdapter;
-import it.alessandromarchi.movieapp.database.MovieDB;
-import it.alessandromarchi.movieapp.database.MovieProvider;
-import it.alessandromarchi.movieapp.database.MovieTableHelper;
+import it.alessandromarchi.moviest.GlideWrapper;
+import it.alessandromarchi.moviest.R;
+import it.alessandromarchi.moviest.adapters.MovieAdapter;
+import it.alessandromarchi.moviest.database.MovieDB;
+import it.alessandromarchi.moviest.database.MovieProvider;
+import it.alessandromarchi.moviest.database.MovieTableHelper;
 
 public class MovieDetail extends AppCompatActivity {
 	TextView ratingText;
 	TextView description;
-	ImageView detailIamge;
+	ImageView detailImage;
+	//	ViewPager2 pager;
 	RatingBar ratingBar;
 
 	SQLiteDatabase database;
@@ -39,8 +41,9 @@ public class MovieDetail extends AppCompatActivity {
 
 		ratingText = findViewById(R.id.rating_text);
 		description = findViewById(R.id.detail_description);
-		detailIamge = findViewById(R.id.detail_image);
 		ratingBar = findViewById(R.id.rating_bar);
+		detailImage = findViewById(R.id.detail_image);
+//		pager = findViewById(R.id.pager);
 
 		movieDB = new MovieDB(this);
 		database = movieDB.getReadableDatabase();
@@ -63,10 +66,14 @@ public class MovieDetail extends AppCompatActivity {
 			float rawStars = movies.getFloat(movies.getColumnIndex(MovieTableHelper.RATING));
 			float stars = rawStars / 2;
 
-			ratingBar.setRating(stars);
-			ratingText.setText("" + rawStars);
-			ratingText.setCompoundDrawablesWithIntrinsicBounds(
-					0, 0, R.drawable.ic_star, 0);
+			ObjectAnimator anim = ObjectAnimator.ofFloat(ratingBar, "rating", stars);
+			anim.setDuration(750);
+			anim.start();
+
+//			ratingBar.setRating(stars);
+			ratingText.setText(rawStars + "/10");
+//			ratingText.setCompoundDrawablesWithIntrinsicBounds(
+//					0, 0, R.drawable.ic_star, 0);
 
 			description.setText(movies.getString(movies.getColumnIndex(MovieTableHelper.DESCRIPTION)) + "\n");
 			description.setMovementMethod(new ScrollingMovementMethod());
@@ -77,7 +84,11 @@ public class MovieDetail extends AppCompatActivity {
 //					.error(R.drawable.ic_error)
 //					.into(detailIamge);
 
-			GlideWrapper.setImage(this, MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.IMAGE_PATH)), detailIamge);
+
+			GlideWrapper.setImage(this, MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.IMAGE_PATH)), detailImage);
+//			GlideWrapper.setImage(this, MovieAdapter.IMAGES_BASE_URL + movies.getString(movies.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)), detailImage2);
+
+//			pager.addView(detailImage);
 
 
 			setTitle(movies.getString(movies.getColumnIndex(MovieTableHelper.TITLE)));

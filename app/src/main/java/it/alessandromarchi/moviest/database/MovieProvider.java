@@ -1,4 +1,4 @@
-package it.alessandromarchi.movieapp.database;
+package it.alessandromarchi.moviest.database;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 public class MovieProvider extends ContentProvider {
 
-    public static final String AUTORITY = "it.alessandromarchi.movieapp.database.ContentProvider";
+    public static final String AUTORITY = "it.alessandromarchi.moviest.database.ContentProvider";
 
     public static final String BASE_PATH_MOVIES = "movies";
 

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "it.alessandromarchi.movieapp"
+        applicationId "it.alessandromarchi.moviest"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
@@ -32,6 +32,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
 
     testImplementation 'junit:junit:4.12'
