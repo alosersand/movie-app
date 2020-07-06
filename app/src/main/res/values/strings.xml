@@ -25,4 +25,6 @@
     <string name="already_isWishlist">Questo film è già nella Wishlist</string>
     <string name="film_image">Immagine Film</string>
     <string name="toggle_wishlist">Alterna Wishliat</string>
+    <string name="offline_mode">OFFLINE MODE</string>
+    <string name="online_mode">ONLINE MODE</string>
 </resources>

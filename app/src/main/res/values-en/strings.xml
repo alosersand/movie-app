@@ -20,4 +20,6 @@
     <string name="already_isWishlist">Movie Already in wishlist</string>
     <string name="toggle_wishlist">Toggle Wishlist</string>
     <string name="film_image" translatable="false">Film Image</string>
+    <string name="offline_mode">OFFLINE MODE</string>
+    <string name="online_mode">ONLINE MODE</string>
 </resources>
