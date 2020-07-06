@@ -2,8 +2,11 @@ package it.alessandromarchi.moviest.activities;
 
 import android.app.ActivityOptions;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,20 +50,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	public static Locale locale;
 
+	View movie;
+
 	List<Movie> movies;
+	MovieAdapter offlineSearch;
 
 	MovieDB movieDB;
 	MovieAdapter movieAdapter;
-
-	GridView moviesGrid;
-	ProgressBar progressBar;
-
-	MenuItem actionWishlist;
-	MenuItem actionSearch;
-
-	SearchView searchView;
-
-	WebService webService;
 	iWebServer webServerListener = new iWebServer() {
 		@Override
 		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
@@ -117,12 +113,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 				progressBar.setVisibility(View.GONE);
 				moviesGrid.setVisibility(View.VISIBLE);
+
+//				Toast.makeText(MainActivity.this, R.string.online_mode, Toast.LENGTH_LONG).show();
 			} else {
-				progressBar.setVisibility(View.VISIBLE);
-				moviesGrid.setVisibility(View.GONE);
+				progressBar.setVisibility(View.GONE);
+//				moviesGrid.setVisibility(View.GONE);
+
+				moviesGrid.setAdapter(movieAdapter);
+
+				Toast.makeText(MainActivity.this, R.string.offline_mode, Toast.LENGTH_LONG).show();
 			}
 		}
 	};
+
+	GridView moviesGrid;
+	ProgressBar progressBar;
+
+	MenuItem actionWishlist;
+	MenuItem actionSearch;
+
+	SearchView searchView;
+
+	WebService webService;
+	private boolean connected;
 
 //
 
@@ -133,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		Log.d(TAG, "onCreateOptionsMenu: ");
 
 		webService = WebService.getInstance();
+
+//		movieAdapterSearch = new MovieAdapter(this, null);
 
 		actionWishlist = menu.findItem(R.id.action_wishlist);
 		actionWishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -148,27 +163,97 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 		actionSearch = menu.findItem(R.id.action_search);
 		searchView = (SearchView) actionSearch.getActionView();
-		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				return false;
-			}
 
-			@Override
-			public boolean onQueryTextChange(String newText) {
-
-				getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
-
-				if (newText.length() > 0) {
-					webService.search(newText, true, webServerListener);
-				} else {
-					webService.getPopulars(webServerListener);
+		if (connected) {
+			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					return false;
 				}
 
+				@Override
+				public boolean onQueryTextChange(String newText) {
 
-				return true;
-			}
-		});
+
+					getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
+
+					if (newText.length() > 0) {
+						webService.search(newText, true, webServerListener);
+					} else {
+						webService.getPopulars(webServerListener);
+					}
+
+
+					return true;
+				}
+			});
+		} else {
+			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					return false;
+				}
+
+				@Override
+				public boolean onQueryTextChange(String newText) {
+					if (newText.length() > 0) {
+
+
+						Cursor cFilms = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+								MovieTableHelper._ID,
+								MovieTableHelper.TITLE,
+								MovieTableHelper.DESCRIPTION,
+								MovieTableHelper.IMAGE_PATH,
+								MovieTableHelper.BACKGROUND_PATH,
+								MovieTableHelper.IS_WISHLIST,
+								MovieTableHelper.RATING
+						}, MovieTableHelper.TITLE + " LIKE " + "'%" + newText + "%'", null, null, null);
+
+
+						if (cFilms != null && cFilms.getCount() >= 1) {
+							cFilms.moveToNext();
+
+//						for (int i = 0; i < cFilms.getCount(); i++) {
+//							cFilms.moveToPosition(i);
+
+							offlineSearch = new MovieAdapter(MainActivity.this, cFilms);
+//							movieAdapter.changeCursor(cFilms);
+
+//							Movie movie = new Movie(
+//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.TITLE)),
+//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.DESCRIPTION)),
+//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.IMAGE_PATH)),
+//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)),
+//									cFilms.getInt(cFilms.getColumnIndex(MovieTableHelper.IS_WISHLIST)),
+//									cFilms.getFloat(cFilms.getColumnIndex(MovieTableHelper.RATING))
+//							);
+
+
+//							moviesGrid.removeAllViewsInLayout();
+
+
+//							View movie = movieAdapterSearch.newView(MainActivity.this, cFilms, null);
+//							movieAdapterSearch.bindView(movie, MainActivity.this, cFilms);
+//							Log.d(TAG, "onQueryTextChange: " + movie);
+
+							moviesGrid.setAdapter(offlineSearch);
+//							movieAdapterSearch.notifyDataSetChanged();
+
+//						}
+
+//
+						}
+
+					} else {
+						moviesGrid.setAdapter(movieAdapter);
+					}
+
+
+					return true;
+				}
+			});
+		}
+
 
 		return true;
 	}
@@ -181,6 +266,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+				connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
 
 //		getWindow().setExitTransition(new Explode());
