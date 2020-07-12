@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import it.alessandromarchi.moviest.adapters.MovieAdapter;
 import it.alessandromarchi.moviest.database.MovieDB;
 import it.alessandromarchi.moviest.database.MovieProvider;
 import it.alessandromarchi.moviest.database.MovieTableHelper;
+import it.alessandromarchi.moviest.database.WishlistTableHelper;
 
 public class MovieDetail extends AppCompatActivity {
 	TextView ratingText;
@@ -50,15 +52,32 @@ public class MovieDetail extends AppCompatActivity {
 
 		Intent intent = getIntent();
 		long id = intent.getLongExtra("movie_id", 0);
+		String movieTitle = intent.getStringExtra("movie_title");
 
-		Cursor movies = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
-				MovieTableHelper.IMAGE_PATH,
-				MovieTableHelper.TITLE,
-				MovieTableHelper.DESCRIPTION,
-				MovieTableHelper.RATING,
-				MovieTableHelper._ID
-		}, MovieTableHelper._ID + " = " + id, null, null, null);
+		Log.d("TAG", "onCreate: " + movieTitle);
+		Log.d("TAG", "onCreate: " + id);
+		Cursor movies = null;
 
+
+		if (movieTitle == null) {
+
+			movies = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+					MovieTableHelper.IMAGE_PATH,
+					MovieTableHelper.TITLE,
+					MovieTableHelper.DESCRIPTION,
+					MovieTableHelper.RATING,
+					MovieTableHelper._ID
+			}, MovieTableHelper._ID + " = " + id, null, null, null);
+		} else {
+			database = movieDB.getReadableDatabase();
+			movies = database.query(WishlistTableHelper.TABLE_NAME, new String[]{
+					WishlistTableHelper.IMAGE_PATH,
+					WishlistTableHelper.TITLE,
+					WishlistTableHelper.DESCRIPTION,
+					WishlistTableHelper.RATING,
+					WishlistTableHelper._ID
+			}, WishlistTableHelper.TITLE + " LIKE " + "'" + movieTitle + "'", null, null, null, null);
+		}
 
 		if (movies != null && movies.getCount() >= 1) {
 			movies.moveToNext();
@@ -103,5 +122,6 @@ public class MovieDetail extends AppCompatActivity {
 
 
 		database.close();
+
 	}
 }

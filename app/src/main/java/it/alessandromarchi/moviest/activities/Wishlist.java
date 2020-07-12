@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,27 +12,23 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
 
 import it.alessandromarchi.moviest.R;
 import it.alessandromarchi.moviest.adapters.MovieAdapter;
 import it.alessandromarchi.moviest.database.MovieDB;
 import it.alessandromarchi.moviest.database.MovieProvider;
 import it.alessandromarchi.moviest.database.MovieTableHelper;
+import it.alessandromarchi.moviest.database.WishlistTableHelper;
 import it.alessandromarchi.moviest.fragments.ConfirmDialogFragment;
 import it.alessandromarchi.moviest.fragments.ConfirmDialogFragmentListener;
 
-public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
+public class Wishlist extends AppCompatActivity implements /*LoaderManager.LoaderCallbacks<Cursor>,*/ ConfirmDialogFragmentListener {
 
-	private static final int LOADER_ID = 871462;
+//	private static final int LOADER_ID = 871462;
 
-	//	SQLiteDatabase database;
+	SQLiteDatabase database;
 	MovieDB movieDB;
 	MovieAdapter movieAdapter;
 
@@ -56,12 +53,12 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 
 //				database = movieDB.getReadableDatabase();
 //					Cursor titles = database.query(
-//									MovieTableHelper.TABLE_NAME,
+//									WishlistTableHelper.TABLE_NAME,
 //									new String[]{
-//													MovieTableHelper.TITLE,
-//													MovieTableHelper._ID
+////													WishlistTableHelper.TITLE,
+//													WishlistTableHelper._ID
 //									},
-//									MovieTableHelper._ID + " = " + id,
+//									WishlistTableHelper.MOVIE_ID + " = " + id,
 //									null,
 //									null,
 //									null,
@@ -96,7 +93,28 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent movieDetail = new Intent(Wishlist.this, MovieDetail.class);
-				movieDetail.putExtra("movie_id", id);
+
+				String movieTitle;
+
+				database = movieDB.getReadableDatabase();
+				Cursor film = database.query(WishlistTableHelper.TABLE_NAME, new String[]{
+						WishlistTableHelper._ID,
+						WishlistTableHelper.TITLE
+				}, WishlistTableHelper._ID + " = " + id, null, null, null, null);
+
+				if (film != null) {
+
+
+					film.moveToNext();
+//					Log.d("TAG", "onItemClick: " + film.getString(film.getColumnIndex(WishlistTableHelper.TITLE)));
+					movieTitle = film.getString(film.getColumnIndex(WishlistTableHelper.TITLE));
+//
+//					Log.d("TAG", "onItemClick: " + movieID);
+//
+					movieDetail.putExtra("movie_title", movieTitle);
+//
+					film.close();
+				}
 
 
 				ActivityOptions options = ActivityOptions
@@ -108,38 +126,54 @@ public class Wishlist extends AppCompatActivity implements LoaderManager.LoaderC
 		});
 
 		//TODO aggiornare con metodo non deprecato
-		getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+//		getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
+		caricaFilm();
+
 		movieAdapter.notifyDataSetChanged();
 	}
 
-	@NonNull
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-		return new CursorLoader(
-				this,
-				MovieProvider.MOVIES_URI,
-				null,
-				MovieTableHelper.IS_WISHLIST + " = " + 1,
-				null,
-				null
-		);
+	private void caricaFilm() {
+		database = movieDB.getReadableDatabase();
+
+		Cursor films = database.query(WishlistTableHelper.TABLE_NAME, null, null, null, null, null, null);
+
+		if (films != null) {
+//			films.moveToNext();
+
+			movieAdapter.changeCursor(films);
+			moviesList.setAdapter(movieAdapter);
+		}
 	}
 
-	@Override
-	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-		movieAdapter.changeCursor(data);
-	}
 
-	@Override
-	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-		movieAdapter.changeCursor(null);
-	}
+//	@NonNull
+//	@Override
+//	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+//		return new CursorLoader(
+//				this,
+//				MovieProvider.MOVIES_URI,
+//				null,
+//				MovieTableHelper.IS_WISHLIST + " = " + 1,
+//				null,
+//				null
+//		);
+//	}
+//
+//	@Override
+//	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+//		movieAdapter.changeCursor(data);
+//	}
+//
+//	@Override
+//	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+//		movieAdapter.changeCursor(null);
+//	}
 
 	@Override
 	public void onPositivePressed(long movieID) {

@@ -17,6 +17,7 @@ public class MovieDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MovieTableHelper.CREATE);
+        db.execSQL(WishlistTableHelper.CREATE);
 
         /*for (int i = 0; i < 20; i++) {
             ContentValues values = new ContentValues();

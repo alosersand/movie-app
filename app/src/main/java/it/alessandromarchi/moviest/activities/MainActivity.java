@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -36,6 +37,7 @@ import it.alessandromarchi.moviest.adapters.MovieAdapter;
 import it.alessandromarchi.moviest.database.MovieDB;
 import it.alessandromarchi.moviest.database.MovieProvider;
 import it.alessandromarchi.moviest.database.MovieTableHelper;
+import it.alessandromarchi.moviest.database.WishlistTableHelper;
 import it.alessandromarchi.moviest.fragments.ConfirmDialogFragment;
 import it.alessandromarchi.moviest.fragments.ConfirmDialogFragmentListener;
 import it.alessandromarchi.moviest.models.Movie;
@@ -56,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	MovieAdapter offlineSearch;
 
 	MovieDB movieDB;
+	SQLiteDatabase database;
 	MovieAdapter movieAdapter;
+
 	iWebServer webServerListener = new iWebServer() {
 		@Override
 		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	};
 
 	GridView moviesGrid;
+	GridView moviesGridSearch;
 	ProgressBar progressBar;
 
 	MenuItem actionWishlist;
@@ -174,9 +179,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				@Override
 				public boolean onQueryTextChange(String newText) {
 
-
+//					moviesGrid.setVisibility(View.GONE);
+//					moviesGridSearch.setVisibility(View.VISIBLE);
+//
+//
 					getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
-
+//
 					if (newText.length() > 0) {
 						webService.search(newText, true, webServerListener);
 					} else {
@@ -284,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 		progressBar = findViewById(R.id.progressBar);
 		moviesGrid = findViewById(R.id.movies_grid);
+		moviesGridSearch = findViewById(R.id.movies_grid_search);
 
 		webService.getPopulars(webServerListener);
 
@@ -293,6 +302,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
 				movieDetail.putExtra("movie_id", id);
+
+				Log.d("TAG", "onItemClick: " + id);
 
 //				final View star = view.findViewById(R.id.grid_item_star);
 //
@@ -316,55 +327,61 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				FragmentManager fragmentManager = getSupportFragmentManager();
 				ConfirmDialogFragment dialogFragment;
 
+				database = movieDB.getReadableDatabase();
+
 				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
-						MovieTableHelper.IS_WISHLIST,
+//						MovieTableHelper.IS_WISHLIST,
 						MovieTableHelper.TITLE,
 						MovieTableHelper._ID
 				}, MovieTableHelper._ID + " = " + id, null, null, null);
 
-				// RISCRIVERE
+				// RISCRIOVERE CONTROLLO TITOLO WISH
 //				if (titles != null && titles.getCount() >= 1) {
 //					titles.moveToNext();
 //
 //					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
-//
-//						if (titles.getCount() >= 1) {
-//
-//
-//							dialogFragment = new ConfirmDialogFragment(
-//									getString(R.string.add_title),
-//									getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
-//									id);
-//						} else {
-//							dialogFragment = new ConfirmDialogFragment(getString(R.string.add_title), getString(R.string.dialog_add_error_confirm), id);
-//						}
+//						dialogFragment = new ConfirmDialogFragment(
+//								getString(R.string.add_title),
+//								getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
+//								id);
 //
 //						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+//					} else {
+//						Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
 //					}
+//
 //					titles.close();
 //				} else {
 //					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
 //				}
-				// ----
 
-
-				if (titles != null && titles.getCount() >= 1) {
+				if (titles != null) {
 					titles.moveToNext();
 
-					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
-						dialogFragment = new ConfirmDialogFragment(
-								getString(R.string.add_title),
-								getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
-								id);
+					String mainTitle = titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE));
 
-						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+					Cursor wishTitle = database.query(WishlistTableHelper.TABLE_NAME, new String[]{
+							WishlistTableHelper.TITLE
+					}, WishlistTableHelper.TITLE + " LIKE " + "'" + mainTitle + "'", null, null, null, null);
+
+					if (wishTitle != null) {
+						if (wishTitle.getCount() == 0) {
+							dialogFragment = new ConfirmDialogFragment(
+									getString(R.string.add_title),
+									getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
+									id);
+
+							dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+						} else {
+							Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
+						}
+						wishTitle.close();
 					} else {
-						Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
+						Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
 					}
 
 					titles.close();
-				} else {
-					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
+
 				}
 
 
@@ -380,8 +397,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	protected void onResume() {
 		super.onResume();
 
+
+		moviesGrid.setVisibility(View.VISIBLE);
 		movieAdapter.notifyDataSetChanged();
 	}
+
 
 	@NonNull
 	@Override
@@ -402,12 +422,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	@Override
 	public void onPositivePressed(long movieID) {
 
-		ContentValues values = new ContentValues();
-		values.put(MovieTableHelper.IS_WISHLIST, 1);
+//		ContentValues values = new ContentValues();
+//		values.put(MovieTableHelper.IS_WISHLIST, 1);
+//
+//		getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
 
-		getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
+
+		// 2 tabelle
+		database = movieDB.getWritableDatabase();
+		Cursor film = database.query(MovieTableHelper.TABLE_NAME, null, MovieTableHelper._ID + " = " + movieID, null, null, null, null);
+
+		if (film != null) {
+			film.moveToNext();
+
+			ContentValues values = new ContentValues();
+			values.put(WishlistTableHelper.TITLE, film.getString(film.getColumnIndex(MovieTableHelper.TITLE)));
+			values.put(WishlistTableHelper.MOVIE_ID, film.getLong(film.getColumnIndex(MovieTableHelper._ID)));
+			values.put(WishlistTableHelper.DESCRIPTION, film.getString(film.getColumnIndex(MovieTableHelper.DESCRIPTION)));
+			values.put(WishlistTableHelper.IMAGE_PATH, film.getString(film.getColumnIndex(MovieTableHelper.IMAGE_PATH)));
+			values.put(WishlistTableHelper.RATING, film.getInt(film.getColumnIndex(MovieTableHelper.RATING)));
+
+			database.insert(WishlistTableHelper.TABLE_NAME, null, values);
+
+			film.close();
+		}
 
 		Toast.makeText(this, R.string.wishlist_add, Toast.LENGTH_SHORT).show();
+
 	}
 
 	@Override

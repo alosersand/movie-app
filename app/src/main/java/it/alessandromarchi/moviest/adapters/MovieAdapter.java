@@ -44,14 +44,18 @@ public class MovieAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 //        int id = cursor.getInt(cursor.getColumnIndex(MovieTableHelper._ID));
+//		Log.d("TAG", "bindView: " + id);
 		String title = cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE));
 		// String description = cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION));
 		String imagePath = cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH));
-		int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
+
 
 		ImageView imageView;
 
 		if (context instanceof MainActivity) {
+//			int isWishlist = cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_WISHLIST));
+
+
 			imageView = view.findViewById(R.id.grid_item);
 
 //			Picasso.get()
@@ -62,12 +66,14 @@ public class MovieAdapter extends CursorAdapter {
 
 			GlideWrapper.setImage(context, IMAGES_BASE_URL + imagePath, imageView);
 
-			if (isWishlist == 1) {
-				view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
-			} else {
-				view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
-			}
+//			if (isWishlist == 1) {
+//				view.findViewById(R.id.grid_item_star).setVisibility(View.VISIBLE);
+//			} else {
+//				view.findViewById(R.id.grid_item_star).setVisibility(View.INVISIBLE);
+//			}
 		} else if (context instanceof Wishlist) {
+
+
 			TextView rowTitle = view.findViewById(R.id.row_title);
 			rowTitle.setText(title);
 
