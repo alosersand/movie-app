@@ -62,10 +62,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	private List<Movie> movies;
 
-	private GridView moviesGridSearch;
 	private ProgressBar progressBar;
-	private SearchView searchView;
 	private GridView moviesGrid;
+
+	private WebService webService;
+
 	iWebServer webServerListener = new iWebServer() {
 		@Override
 		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
@@ -124,9 +125,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			}
 		}
 	};
-	private MenuItem actionWishlist;
-	private MenuItem actionSearch;
-	private WebService webService;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -135,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 		webService = WebService.getInstance();
 
-		actionWishlist = menu.findItem(R.id.action_wishlist);
+		MenuItem actionWishlist = menu.findItem(R.id.action_wishlist);
 		actionWishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -146,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			}
 		});
 
-		actionSearch = menu.findItem(R.id.action_search);
-		searchView = (SearchView) actionSearch.getActionView();
+		MenuItem actionSearch = menu.findItem(R.id.action_search);
+		SearchView searchView = (SearchView) actionSearch.getActionView();
 
 		if (connected) {
 			searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -224,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 		progressBar = findViewById(R.id.progressBar);
 		moviesGrid = findViewById(R.id.movies_grid);
-		moviesGridSearch = findViewById(R.id.movies_grid_search);
 
 		webService.getPopulars(webServerListener);
 
