@@ -6,25 +6,24 @@
     <string name="database_read_error">Errore nella lettura del database</string>
     <string name="database_write_error">Errore nella scrittura sul database</string>
     <string name="TMP" translatable="false">isWishlist = %d</string>
-
     <string name="dialog_add_error_confirm">Aggiungere il Film alla Wishlist?</string>
     <string name="dialog_add_confirm">Aggiungere &lt;i>%s&lt;/i> alla Wishlist?</string>
     <string name="wishlist_add">Aggiunto alla Wishlist</string>
-
     <string name="dialog_remove_error_confirm">Rimuovere il Film alla Wishlist?</string>
     <string name="dialog_remove_confirm">Rimuovere &lt;i>%s&lt;/i> alla Wishlist?</string>
     <string name="wishlist_remove">Rimosso dalla Wishlist</string>
-
     <string name="add">aggiungi</string>
     <string name="remove">rimuovi</string>
     <string name="cancel">annulla</string>
     <string name="description">Descrizione</string>
-
     <string name="add_title">Aggiungi</string>
     <string name="remove_title">Rimuovi</string>
     <string name="already_isWishlist">Questo film è già nella Wishlist</string>
     <string name="film_image">Immagine Film</string>
     <string name="toggle_wishlist">Alterna Wishliat</string>
-    <string name="offline_mode">OFFLINE MODE</string>
-    <string name="online_mode">ONLINE MODE</string>
+    <string name="offline_mode">Sei Offline</string>
+    <string name="online_mode">Sei Online</string>
+    <string name="locandina" translatable="false">locandina</string>
+    <string name="iswishlist" translatable="false">isWishlist</string>
+    <string name="rating_stars" translatable="false">%.1f/10</string>
 </resources>

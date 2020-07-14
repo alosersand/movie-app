@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MovieApp</string>
+    <string name="app_name">Moviest</string>
     <string name="rating_text">Title</string>
     <string name="search">Search</string>
     <string name="dialog_add_confirm">Add &lt;i>%s&lt;/i> to Wishlist?</string>
@@ -20,6 +20,6 @@
     <string name="already_isWishlist">Movie Already in wishlist</string>
     <string name="toggle_wishlist">Toggle Wishlist</string>
     <string name="film_image" translatable="false">Film Image</string>
-    <string name="offline_mode">OFFLINE MODE</string>
-    <string name="online_mode">ONLINE MODE</string>
+    <string name="offline_mode">Offline Mode</string>
+    <string name="online_mode">Online Mode</string>
 </resources>

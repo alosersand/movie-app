@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,20 +46,26 @@ import it.alessandromarchi.moviest.services.iWebServer;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConfirmDialogFragmentListener {
 
-	public static final String TAG = "paradiddle";
 	private static final int LOADER_ID = 568175;
+
+	private boolean connected;
 
 	public static Locale locale;
 
-	View movie;
+	private MovieDB movieDB;
+	private SQLiteDatabase database;
 
-	List<Movie> movies;
-	MovieAdapter offlineSearch;
+	private MovieAdapter offlineSearch;
+	private MovieAdapter movieAdapter;
 
-	MovieDB movieDB;
-	SQLiteDatabase database;
-	MovieAdapter movieAdapter;
+	private Cursor cursor;
 
+	private List<Movie> movies;
+
+	private GridView moviesGridSearch;
+	private ProgressBar progressBar;
+	private SearchView searchView;
+	private GridView moviesGrid;
 	iWebServer webServerListener = new iWebServer() {
 		@Override
 		public void onMoviesFetched(boolean success, TMDBResponse _TMDBResponse, int errorCode, String errorMessage) {
@@ -70,12 +75,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 				ContentValues values = new ContentValues();
 
-				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+				cursor = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
 						MovieTableHelper._ID,
 						MovieTableHelper.TITLE
 				}, null, null, null, null);
 
-				if (titles != null && titles.getCount() >= 1) {
+				if (cursor != null && cursor.getCount() >= 1) {
 					for (int i = 0; i < moviesSize; i++) {
 						values.put(MovieTableHelper.TITLE, movies.get(i).getTitle());
 						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
@@ -83,25 +88,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 						values.put(MovieTableHelper.BACKGROUND_PATH, movies.get(i).getBackgroundPath());
 						values.put(MovieTableHelper.RATING, movies.get(i).getRating());
 
-						titles.moveToPosition(i);
+						cursor.moveToPosition(i);
 
-//						Log.d("TAG", "TITLES(" + i + "): " + titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)));
-//						Log.d("TAG", "MOVIES(" + i + "): " + movies.get(i).getTitle());
-
-						if (titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE)).equals(movies.get(i).getTitle())) {
-//							Log.d("TAG", "UPDATE");
+						if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movies.get(i).getTitle())) {
 							getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + i), values, null, null);
 						} else {
-//							Log.d("TAG", "INSERT");
 							getContentResolver().insert(MovieProvider.MOVIES_URI, values);
 						}
 					}
 
-					titles.close();
+					cursor.close();
 
 				} else {
-					Log.d("TAG", "NEW INSERT");
-
 					for (int i = 0; i < moviesSize; i++) {
 						values.put(MovieTableHelper.TITLE, movies.get(i).getTitle());
 						values.put(MovieTableHelper.DESCRIPTION, movies.get(i).getDescription());
@@ -117,11 +115,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 				progressBar.setVisibility(View.GONE);
 				moviesGrid.setVisibility(View.VISIBLE);
-
-//				Toast.makeText(MainActivity.this, R.string.online_mode, Toast.LENGTH_LONG).show();
 			} else {
 				progressBar.setVisibility(View.GONE);
-//				moviesGrid.setVisibility(View.GONE);
 
 				moviesGrid.setAdapter(movieAdapter);
 
@@ -129,36 +124,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 			}
 		}
 	};
-
-	GridView moviesGrid;
-	GridView moviesGridSearch;
-	ProgressBar progressBar;
-
-	MenuItem actionWishlist;
-	MenuItem actionSearch;
-
-	SearchView searchView;
-
-	WebService webService;
-	private boolean connected;
-
-//
+	private MenuItem actionWishlist;
+	private MenuItem actionSearch;
+	private WebService webService;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.action_menu, menu);
-		Log.d(TAG, "onCreateOptionsMenu: ");
 
 		webService = WebService.getInstance();
-
-//		movieAdapterSearch = new MovieAdapter(this, null);
 
 		actionWishlist = menu.findItem(R.id.action_wishlist);
 		actionWishlist.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-
 				Intent wishlist = new Intent(MainActivity.this, Wishlist.class);
 				startActivity(wishlist);
 
@@ -178,19 +158,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 				@Override
 				public boolean onQueryTextChange(String newText) {
-
-//					moviesGrid.setVisibility(View.GONE);
-//					moviesGridSearch.setVisibility(View.VISIBLE);
-//
-//
 					getContentResolver().delete(MovieProvider.MOVIES_URI, null, null);
-//
+
 					if (newText.length() > 0) {
 						webService.search(newText, true, webServerListener);
 					} else {
 						webService.getPopulars(webServerListener);
 					}
-
 
 					return true;
 				}
@@ -205,9 +179,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 				@Override
 				public boolean onQueryTextChange(String newText) {
 					if (newText.length() > 0) {
-
-
-						Cursor cFilms = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+						cursor = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
 								MovieTableHelper._ID,
 								MovieTableHelper.TITLE,
 								MovieTableHelper.DESCRIPTION,
@@ -217,71 +189,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 								MovieTableHelper.RATING
 						}, MovieTableHelper.TITLE + " LIKE " + "'%" + newText + "%'", null, null, null);
 
+						if (cursor != null && cursor.getCount() >= 1) {
+							cursor.moveToNext();
 
-						if (cFilms != null && cFilms.getCount() >= 1) {
-							cFilms.moveToNext();
-
-//						for (int i = 0; i < cFilms.getCount(); i++) {
-//							cFilms.moveToPosition(i);
-
-							offlineSearch = new MovieAdapter(MainActivity.this, cFilms);
-//							movieAdapter.changeCursor(cFilms);
-
-//							Movie movie = new Movie(
-//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.TITLE)),
-//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.DESCRIPTION)),
-//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.IMAGE_PATH)),
-//									cFilms.getString(cFilms.getColumnIndex(MovieTableHelper.BACKGROUND_PATH)),
-//									cFilms.getInt(cFilms.getColumnIndex(MovieTableHelper.IS_WISHLIST)),
-//									cFilms.getFloat(cFilms.getColumnIndex(MovieTableHelper.RATING))
-//							);
-
-
-//							moviesGrid.removeAllViewsInLayout();
-
-
-//							View movie = movieAdapterSearch.newView(MainActivity.this, cFilms, null);
-//							movieAdapterSearch.bindView(movie, MainActivity.this, cFilms);
-//							Log.d(TAG, "onQueryTextChange: " + movie);
+							offlineSearch = new MovieAdapter(MainActivity.this, cursor);
 
 							moviesGrid.setAdapter(offlineSearch);
-//							movieAdapterSearch.notifyDataSetChanged();
-
-//						}
-
-//
 						}
-
 					} else {
 						moviesGrid.setAdapter(movieAdapter);
 					}
-
 
 					return true;
 				}
 			});
 		}
 
-
 		return true;
 	}
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-//		getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-		Log.d(TAG, "onCreate: ");
-
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-				connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
-
-
-//		getWindow().setExitTransition(new Explode());
+		checkConnection();
 
 		locale = getResources().getConfiguration().locale;
 
@@ -300,96 +232,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 		moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
-				movieDetail.putExtra("movie_id", id);
-
-				Log.d("TAG", "onItemClick: " + id);
-
-//				final View star = view.findViewById(R.id.grid_item_star);
-//
-//				Pair[] pairs = new Pair[2];
-//				pairs[0] = new Pair<View, String>(view, "imageTransition");
-//				pairs[1] = new Pair<View, String>(star, "starTransition");
-
-				ActivityOptions options = ActivityOptions
-						.makeSceneTransitionAnimation(MainActivity.this, view, "imageTransition");
-
-//				ActivityOptions options = ActivityOptions
-//						.makeSceneTransitionAnimation(MainActivity.this, pairs);
-
-
-				startActivity(movieDetail, options.toBundle());
+				apriDettaglioFilm(id, view);
 			}
 		});
 		moviesGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				FragmentManager fragmentManager = getSupportFragmentManager();
-				ConfirmDialogFragment dialogFragment;
-
-				database = movieDB.getReadableDatabase();
-
-				Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
-//						MovieTableHelper.IS_WISHLIST,
-						MovieTableHelper.TITLE,
-						MovieTableHelper._ID
-				}, MovieTableHelper._ID + " = " + id, null, null, null);
-
-				// RISCRIOVERE CONTROLLO TITOLO WISH
-//				if (titles != null && titles.getCount() >= 1) {
-//					titles.moveToNext();
-//
-//					if (titles.getInt(titles.getColumnIndex(MovieTableHelper.IS_WISHLIST)) == 0) {
-//						dialogFragment = new ConfirmDialogFragment(
-//								getString(R.string.add_title),
-//								getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
-//								id);
-//
-//						dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
-//					} else {
-//						Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
-//					}
-//
-//					titles.close();
-//				} else {
-//					Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
-//				}
-
-				if (titles != null) {
-					titles.moveToNext();
-
-					String mainTitle = titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE));
-
-					Cursor wishTitle = database.query(WishlistTableHelper.TABLE_NAME, new String[]{
-							WishlistTableHelper.TITLE
-					}, WishlistTableHelper.TITLE + " LIKE " + "'" + mainTitle + "'", null, null, null, null);
-
-					if (wishTitle != null) {
-						if (wishTitle.getCount() == 0) {
-							dialogFragment = new ConfirmDialogFragment(
-									getString(R.string.add_title),
-									getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
-									id);
-
-							dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
-						} else {
-							Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
-						}
-						wishTitle.close();
-					} else {
-						Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
-					}
-
-					titles.close();
-
-				}
-
+				addToWishlist(id);
 
 				return true;
 			}
 		});
 
-		//TODO aggiornare con metodo non deprecato
 		getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 	}
 
@@ -397,11 +251,68 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 	protected void onResume() {
 		super.onResume();
 
+		checkConnection();
 
 		moviesGrid.setVisibility(View.VISIBLE);
 		movieAdapter.notifyDataSetChanged();
 	}
 
+	private void checkConnection() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+				connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
+	}
+
+	private void apriDettaglioFilm(long id, View view) {
+		Intent movieDetail = new Intent(MainActivity.this, MovieDetail.class);
+		movieDetail.putExtra("movie_id", id);
+
+		ActivityOptions options = ActivityOptions
+				.makeSceneTransitionAnimation(MainActivity.this, view, "imageTransition");
+
+		startActivity(movieDetail, options.toBundle());
+	}
+
+	private void addToWishlist(long id) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		ConfirmDialogFragment dialogFragment;
+
+		database = movieDB.getReadableDatabase();
+		Cursor titles = getContentResolver().query(Uri.parse("" + MovieProvider.MOVIES_URI), new String[]{
+				MovieTableHelper.TITLE,
+				MovieTableHelper._ID
+		}, MovieTableHelper._ID + " = " + id, null, null, null);
+
+		if (titles != null) {
+			titles.moveToNext();
+
+			String mainTitle = titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE));
+
+			Cursor wishTitle = database.query(WishlistTableHelper.TABLE_NAME, new String[]{
+					WishlistTableHelper.TITLE
+			}, WishlistTableHelper.TITLE + " LIKE " + "'" + mainTitle + "'", null, null, null, null);
+
+			if (wishTitle != null) {
+				if (wishTitle.getCount() == 0) {
+					dialogFragment = new ConfirmDialogFragment(
+							getString(R.string.add_title),
+							getString(R.string.dialog_add_confirm, titles.getString(titles.getColumnIndex(MovieTableHelper.TITLE))),
+							id);
+
+					dialogFragment.show(fragmentManager, ConfirmDialogFragment.class.getName());
+				} else {
+					Toast.makeText(MainActivity.this, R.string.already_isWishlist, Toast.LENGTH_SHORT).show();
+				}
+
+				wishTitle.close();
+			} else {
+				Toast.makeText(MainActivity.this, R.string.database_read_error, Toast.LENGTH_SHORT).show();
+			}
+
+			titles.close();
+		}
+	}
 
 	@NonNull
 	@Override
@@ -421,38 +332,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 	@Override
 	public void onPositivePressed(long movieID) {
-
-//		ContentValues values = new ContentValues();
-//		values.put(MovieTableHelper.IS_WISHLIST, 1);
-//
-//		getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI + "/" + movieID), values, null, null);
-
-
-		// 2 tabelle
 		database = movieDB.getWritableDatabase();
-		Cursor film = database.query(MovieTableHelper.TABLE_NAME, null, MovieTableHelper._ID + " = " + movieID, null, null, null, null);
+		cursor = database.query(MovieTableHelper.TABLE_NAME, null, MovieTableHelper._ID + " = " + movieID, null, null, null, null);
 
-		if (film != null) {
-			film.moveToNext();
+		if (cursor != null) {
+			cursor.moveToNext();
 
 			ContentValues values = new ContentValues();
-			values.put(WishlistTableHelper.TITLE, film.getString(film.getColumnIndex(MovieTableHelper.TITLE)));
-			values.put(WishlistTableHelper.MOVIE_ID, film.getLong(film.getColumnIndex(MovieTableHelper._ID)));
-			values.put(WishlistTableHelper.DESCRIPTION, film.getString(film.getColumnIndex(MovieTableHelper.DESCRIPTION)));
-			values.put(WishlistTableHelper.IMAGE_PATH, film.getString(film.getColumnIndex(MovieTableHelper.IMAGE_PATH)));
-			values.put(WishlistTableHelper.RATING, film.getInt(film.getColumnIndex(MovieTableHelper.RATING)));
+			values.put(WishlistTableHelper.TITLE, cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)));
+			values.put(WishlistTableHelper.MOVIE_ID, cursor.getLong(cursor.getColumnIndex(MovieTableHelper._ID)));
+			values.put(WishlistTableHelper.DESCRIPTION, cursor.getString(cursor.getColumnIndex(MovieTableHelper.DESCRIPTION)));
+			values.put(WishlistTableHelper.IMAGE_PATH, cursor.getString(cursor.getColumnIndex(MovieTableHelper.IMAGE_PATH)));
+			values.put(WishlistTableHelper.RATING, cursor.getInt(cursor.getColumnIndex(MovieTableHelper.RATING)));
 
 			database.insert(WishlistTableHelper.TABLE_NAME, null, values);
-
-			film.close();
 		}
 
 		Toast.makeText(this, R.string.wishlist_add, Toast.LENGTH_SHORT).show();
-
 	}
 
 	@Override
 	public void onNegativePressed() {
 
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		if (movieDB != null) movieDB.close();
+		if (database != null) database.close();
+		if (cursor != null) cursor.close();
 	}
 }

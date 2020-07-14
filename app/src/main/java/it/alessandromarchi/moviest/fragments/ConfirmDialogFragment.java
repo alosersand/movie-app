@@ -15,19 +15,17 @@ import it.alessandromarchi.moviest.R;
 
 public class ConfirmDialogFragment extends DialogFragment {
 
-	private String title;
+	private ConfirmDialogFragmentListener listener;
+
 	private String message;
+	private String title;
+
 	private long movieID;
 
-	private ConfirmDialogFragmentListener listener;
+	private AlertDialog.Builder alertDialog;
 
 	public ConfirmDialogFragment(String title, String message, long movieID) {
 		this.title = title;
-		this.message = message;
-		this.movieID = movieID;
-	}
-
-	public ConfirmDialogFragment(String message, long movieID) {
 		this.message = message;
 		this.movieID = movieID;
 	}
@@ -46,13 +44,15 @@ public class ConfirmDialogFragment extends DialogFragment {
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
 
-		String positiveButton;
+		if (getActivity() != null) {
+			alertDialog = new AlertDialog.Builder(getActivity());
+		}
 
 		alertDialog.setTitle(title);
 		alertDialog.setMessage(Html.fromHtml(message));
 
+		String positiveButton;
 		if (title.equals(getString(R.string.add_title))) {
 			positiveButton = getString(R.string.add);
 		} else {

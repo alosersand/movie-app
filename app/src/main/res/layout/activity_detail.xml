@@ -12,25 +12,13 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!--            <androidx.viewpager2.widget.ViewPager2-->
-            <!--                android:id="@+id/pager"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="300dp"-->
-            <!--                android:transitionName="imageTransition"-->
-
-
-            <!--                />-->
-
 
             <ImageView
                 android:id="@+id/detail_image"
@@ -39,7 +27,6 @@
                 android:contentDescription="@string/film_image"
                 android:scaleType="centerCrop"
                 android:transitionName="imageTransition" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -51,15 +38,11 @@
                 <RatingBar
                     android:id="@+id/rating_bar"
                     android:layout_width="wrap_content"
-
-
                     android:layout_height="wrap_content"
-
                     android:isIndicator="true"
                     android:numStars="5" />
 
                 <TextView
-
                     android:id="@+id/rating_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,23 +50,19 @@
                     android:text="@string/rating_text"
                     android:textAlignment="center"
                     android:textSize="25sp" />
+
             </LinearLayout>
 
-
             <TextView
+                android:paddingBottom="16dp"
                 android:id="@+id/detail_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:text="@string/description"
-
-
                 android:textAlignment="viewStart"
                 android:textSize="20sp" />
+
         </LinearLayout>
-
-
     </ScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

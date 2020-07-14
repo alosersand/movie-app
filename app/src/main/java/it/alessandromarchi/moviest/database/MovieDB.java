@@ -18,15 +18,6 @@ public class MovieDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MovieTableHelper.CREATE);
         db.execSQL(WishlistTableHelper.CREATE);
-
-        /*for (int i = 0; i < 20; i++) {
-            ContentValues values = new ContentValues();
-
-            values.put(MovieTableHelper.TITLE, "Title N°" + i);
-            values.put(MovieTableHelper.IS_WISHLIST, i % 3 == 0 ? 1 : 0);
-
-            db.insert(MovieTableHelper.TABLE_NAME, null, values);
-        }*/
     }
 
     @Override

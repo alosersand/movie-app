@@ -6,6 +6,7 @@
     tools:context=".activities.Wishlist">
 
     <ListView
+        tools:listitem="@layout/movie_row"
         android:divider="@android:color/white"
         android:dividerHeight="16dp"
         android:paddingHorizontal="16dp"

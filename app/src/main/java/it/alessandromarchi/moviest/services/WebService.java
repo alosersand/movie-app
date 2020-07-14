@@ -11,19 +11,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WebService {
 
+	private iMovieService iMovieService;
+
 	private static WebService instance;
 
 	private String MOVIES_BASE_URL = "https://api.themoviedb.org/";
 	private String API_KEY = "5771171ef3fdb433ef45cd105f4b541f";
-	//	private String LANGUAGE = MainActivity.locale.toString();
-	private String LANGUAGE = "it-IT";
-	private int PAGE = 1;
-	//	private String REGION = MainActivity.locale.getCountry();
-	private String REGION = "IT";
-	private int VERSION = 3;
 	private String CATEGORY = "popular";
+	private String LANGUAGE = "it-IT";
+	private String REGION = "IT";
 
-	private iMovieService iMovieService;
+	private int VERSION = 3;
+	private int PAGE = 1;
 
 	private WebService() {
 		Retrofit retrofit = new Retrofit.Builder()
@@ -95,6 +94,4 @@ public class WebService {
 			}
 		});
 	}
-
-
 }
