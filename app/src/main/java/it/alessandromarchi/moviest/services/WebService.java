@@ -2,6 +2,7 @@ package it.alessandromarchi.moviest.services;
 
 import java.io.IOException;
 
+import it.alessandromarchi.moviest.activities.MainActivity;
 import it.alessandromarchi.moviest.models.TMDBResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,8 +19,8 @@ public class WebService {
 	private String MOVIES_BASE_URL = "https://api.themoviedb.org/";
 	private String API_KEY = "5771171ef3fdb433ef45cd105f4b541f";
 	private String CATEGORY = "popular";
-	private String LANGUAGE = "it-IT";
-	private String REGION = "IT";
+	private String LANGUAGE = MainActivity.locale.toString().replace("_", "-");
+	private String REGION = MainActivity.locale.getCountry();
 
 	private int VERSION = 3;
 	private int PAGE = 1;
